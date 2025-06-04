@@ -1,47 +1,33 @@
-package streaming
+package main
 
 import (
-	"errors"
+	"context"
 	"fmt"
+	"reflect"
 	"time"
 
-	hw "github.com/cmd-stream/cmd-stream-examples-go/hello-world"
-
-	"github.com/cmd-stream/base-go"
-	bcln "github.com/cmd-stream/base-go/client"
+	"github.com/cmd-stream/core-go"
+	"github.com/cmd-stream/examples-go/hello-world/utils"
+	"github.com/cmd-stream/examples-go/server-streaming/results"
+	sndr "github.com/cmd-stream/sender-go"
 )
 
-func Exchange[T any](cmd base.Cmd[T], timeout time.Duration,
-	client *bcln.Client[T],
-	wantStrs []string,
-) (err error) {
+func Exchange[T any](cmd core.Cmd[T], wantGreetings []results.Greeting,
+	sender sndr.Sender[T]) (err error) {
 	var (
-		seq      base.Seq
-		results  = make(chan base.AsyncResult, 1)
-		deadline = time.Now().Add(hw.CmdSendDuration)
+		ctx, cancel = context.WithTimeout(context.Background(),
+			utils.ResultReceiveDuration)
+		deadline = time.Now().Add(utils.CmdSendDuration)
 	)
-	seq, err = client.SendWithDeadline(deadline, cmd, results)
-	if err != nil {
-		return
-	}
-
-	for i := 0; i < len(wantStrs); i++ {
-		// Waiting for the result with a timeout.
-		select {
-		case <-time.NewTimer(timeout).C:
-			client.Forget(seq) // If you are no longer interested in the results of
-			// this command, call Forget().
-			return errors.New("timeout")
-		case asyncResult := <-results:
-			if asyncResult.Error != nil {
-				return asyncResult.Error
-			}
-			greeting := asyncResult.Result.(Greeting).String()
-			if greeting != wantStrs[i] {
-				return fmt.Errorf("unexpected greeting, want %v actual %v", wantStrs[i],
-					greeting)
-			}
+	defer cancel()
+	var handler sndr.ResultHandlerFn = func(result core.Result, err error) error {
+		greeting := result.(results.Greeting)
+		if !reflect.DeepEqual(greeting, wantGreetings[0]) {
+			return fmt.Errorf("unexpected greeting, want %v actual %v",
+				wantGreetings[0], greeting)
 		}
+		return nil
 	}
-	return
+	return sender.SendMultiWithDeadline(ctx, cmd, len(wantGreetings), handler,
+		deadline)
 }

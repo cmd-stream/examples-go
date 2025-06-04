@@ -1,25 +1,27 @@
-package reconnect
+package main
 
 import (
-	"fmt"
-
-	"github.com/cmd-stream/base-go"
-	bcln "github.com/cmd-stream/base-go/client"
-	ccln "github.com/cmd-stream/cmd-stream-go/client"
+	cmdstream "github.com/cmd-stream/cmd-stream-go"
+	cln "github.com/cmd-stream/cmd-stream-go/client"
+	grp "github.com/cmd-stream/cmd-stream-go/group"
+	ccln "github.com/cmd-stream/core-go/client"
+	"github.com/cmd-stream/examples-go/hello-world/utils"
+	sndr "github.com/cmd-stream/sender-go"
 )
 
-func CreateReconnectClient[T any](codec ccln.Codec[T],
-	connFactory ccln.ConnFactory) (c *bcln.Client[T], err error) {
-
-	var callback bcln.UnexpectedResultCallback = func(seq base.Seq, result base.Result) {
-		fmt.Printf("unexpected result was received: seq %v, result %v\n", seq,
-			result)
-	}
-
-	return ccln.NewReconnect[T](codec, connFactory,
-		ccln.WithBase(
-			bcln.WithUnexpectedResultCallback(callback),
+func MakeReconnectSender[T any](codec cln.Codec[T], connFactory cln.ConnFactory) (
+	sender sndr.Sender[T], err error) {
+	group, err := cmdstream.MakeClientGroup(1, codec, connFactory,
+		grp.WithReconnect[T](),
+		grp.WithClientOps[T](
+			cln.WithCore(
+				ccln.WithUnexpectedResultCallback(utils.ClientCallback),
+			),
 		),
 	)
-
+	if err != nil {
+		return
+	}
+	sender = sndr.New(group)
+	return
 }

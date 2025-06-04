@@ -1,0 +1,40 @@
+version: "3.9"
+
+services:
+  prometheus:
+    image: prom/prometheus:latest
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./config/prometheus.yml:/etc/prometheus/prometheus.yml
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+
+  tempo:
+    image: grafana/tempo:latest
+    command: ["-config.file=/etc/tempo.yaml"]
+    ports:
+      - "3200:3200"   # Tempo UI / query port
+    volumes:
+      - ./config/tempo.yaml:/etc/tempo.yaml
+
+  otel-collector:
+    image: otel/opentelemetry-collector:latest
+    command: ["--config=/etc/otel-collector-config.yaml"]
+    ports:
+      - "4317:4317"   # OTLP gRPC for traces + metrics from apps
+    volumes:
+      - ./config/otel-collector-config.yaml:/etc/otel-collector-config.yaml
+    depends_on:
+      - tempo
+      - prometheus
+
+  grafana:
+    image: grafana/grafana-oss:latest
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./config/grafana-provisioning:/etc/grafana/provisioning
+    depends_on:
+      - tempo
+      - prometheus
