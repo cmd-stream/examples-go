@@ -15,4 +15,3 @@ is one example):
   sends back multiple Results.
 - [rpc](rpc): Demonstrates how to implement RPC using cmd-stream-go.
 - [tls](tls): Demonstrates how to use cmd-stream-go with TLS.
-- 
