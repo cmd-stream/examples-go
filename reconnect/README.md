@@ -16,7 +16,7 @@ an error again.
 To create a client group with reconnect clients:
 ```go
 group, err := cmdstream.MakeClientGroup(1, codec, connFactory,
-	grp.WithReconnect[T](),
-	...
+  grp.WithReconnect[T](),
+  ...
 )
 ```
