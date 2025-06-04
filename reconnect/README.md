@@ -10,7 +10,7 @@ The connection can be lost in two ways:
 
 In both cases, using the reconnect client allows the Command to be resent 
 (assuming it is idempotent) after a short delay. If the connection was 
-re-established, normal operations resume, otherwise, Client.Send() will return 
+re-established, normal operations resume, otherwise, `Client.Send()` will return 
 an error again.
 
 To create a client group with reconnect clients:

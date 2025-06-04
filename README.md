@@ -13,8 +13,6 @@ is one example):
   circuit breaker and OpenTelemetry.
 - [server-streaming](server-streaming): An example where the Command 
   sends back multiple Results.
-- [client-group](client-group): Demonstrates the usage of client 
-  groups for high-performance communication with the server.
 - [rpc](rpc): Demonstrates how to implement RPC using cmd-stream-go.
 - [tls](tls): Demonstrates how to use cmd-stream-go with TLS.
 - 
