@@ -1,5 +1,3 @@
-// utils.go
-
 package utils
 
 import (
@@ -139,41 +137,6 @@ func MakeSender[T any](addr string, clientsCount int, codec cln.Codec[T]) (
 	sender = sndr.New(group)
 	return
 }
-
-// func MakeSender[T any](addr string, clientsCount int, codec ccln.Codec[T],
-// 	ops ...ccln.SetOption) sndr.Sender[T] {
-// 	var callback ccln.UnexpectedResultCallback = func(seq core.Seq, result core.Result) {
-// 		log.Printf("Client: unexpected result: seq %v, result %v\n", seq, result)
-// 	}
-// 	defOps := []ccln.SetOption{
-// 		ccln.WithBase(
-// 			// UnexpectedResultCallback handles unexpected results from the
-// 			// server. If you call Client.Forget(seq) for a Command, its results
-// 			// will be handled by this function.
-// 			ccln.WithUnexpectedResultCallback(callback),
-// 			// Use Transport configuration to set the buffers size. If absent
-// 			// default values from the bufio package are used.
-// 			// ccln.WithTransport(
-// 			//   tcom.WithWriterBufSize(...),
-// 			//   tcom.WithReaderBufSize(...),
-// 			// ),
-// 		),
-// 	}
-// 	var connFactory ccln.ConnFactoryFn = func() (net.Conn, error) {
-// 		return net.Dial("tcp", addr)
-// 	}
-// 	group, err := cmdstream.MakeClientGroup(clientsCount, codec, connFactory,
-// 		grp.WithClientOps[T](append(defOps, ops...)...),
-// 	)
-// 	if err != nil {
-// 		// An error in this case indicates that the number of clients in the group is
-// 		// less than the clientsCount parameter. If you're not satisfied with that,
-// 		// don't forget to close the group.
-// 		group.Close()
-// 		panic(err)
-// 	}
-// 	return sndr.New[T](group)
-// }
 
 // CloseSender closes the sender and waits for it to stop.
 func CloseSender[T any](sender sndr.Sender[T]) (err error) {

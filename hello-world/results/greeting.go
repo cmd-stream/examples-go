@@ -1,5 +1,3 @@
-// result.go
-
 package results
 
 import muss "github.com/mus-format/mus-stream-go"

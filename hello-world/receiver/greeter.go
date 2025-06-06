@@ -1,5 +1,3 @@
-// receiver.go
-
 package receiver
 
 import "strings"

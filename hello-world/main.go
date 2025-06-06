@@ -1,5 +1,3 @@
-// hello-world_test.go
-
 package main
 
 import (

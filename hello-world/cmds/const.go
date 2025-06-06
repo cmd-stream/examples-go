@@ -7,10 +7,10 @@ import (
 	com "github.com/mus-format/common-go"
 )
 
-// CmdExecDuration defines the duration of Command execution.
-const CmdExecDuration = time.Second
-
 const (
 	SayHelloCmdDTM com.DTM = iota + 1
 	SayFancyHelloCmdDTM
 )
+
+// CmdExecDuration defines the duration of Command execution.
+const CmdExecDuration = time.Second

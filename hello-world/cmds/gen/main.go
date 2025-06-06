@@ -1,5 +1,3 @@
-// gen/main.go
-
 package main
 
 import (
