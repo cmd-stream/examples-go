@@ -6,14 +6,14 @@ during the first and last 30 seconds. During the middle 30 seconds, it is down,
 allowing you to observe the circuit breaker in action through log messages.
 
 ```
-                         circuit breaker active
+                          circuit breaker open
 |-----------------------|-----------------------|-----------------------|
         server up              server down              server up 
 
 ```
 
 Spans are created for each Command on the client side and propagated to the 
-server using `TraceCmd`, a simple wrapper around regular Commands.
+server using `TraceCmd`, a simple wrapper around a regular Command.
 
 ## How It Works
 - The app sends traces and metrics to the OTEL Collector via OTLP (port 4317).
