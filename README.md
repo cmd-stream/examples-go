@@ -9,8 +9,8 @@ is one example):
   alive when there are no Commands to send.
 - [reconnect](reconnect): Demonstrates how the client can reconnect 
   to the server after losing the connection.
-- [otel](otel): Demonstrates how cmd-stream-go can be used with a 
-  circuit breaker and OpenTelemetry.
+- [otel](otel): Demonstrates how cmd-stream-go can be used with OpenTelemetry 
+  and a circuit breaker.
 - [server-streaming](server-streaming): An example where the Command 
   sends back multiple Results.
 - [rpc](rpc): Demonstrates how to implement RPC using cmd-stream-go.
