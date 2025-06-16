@@ -4,7 +4,6 @@ go 1.23.0
 
 require (
 	github.com/brianvoe/gofakeit v3.18.0+incompatible
-	github.com/cmd-stream/base-go v0.0.0-20250325143652-da24f04b9776
 	github.com/cmd-stream/cmd-stream-go v0.4.1-0.20250603154844-e7752b068651
 	github.com/cmd-stream/codec-mus-stream-go v0.0.0-20250603153934-780cd97e6d03
 	github.com/cmd-stream/core-go v0.0.0-20250602134159-c37a0a251158
@@ -33,8 +32,8 @@ require (
 
 require (
 	github.com/cenkalti/backoff/v5 v5.0.2 // indirect
-	github.com/cmd-stream/otelcmd-stream-go v0.0.0-20250603155709-5e8bf798e33d // indirect
-	github.com/cmd-stream/sender-go v0.0.0-20250603160412-788b660ce852 // indirect
+	github.com/cmd-stream/otelcmd-stream-go v0.1.0
+	github.com/cmd-stream/sender-go v0.0.0-20250603160412-788b660ce852
 	github.com/go-logr/logr v1.4.2 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
 	github.com/google/uuid v1.6.0 // indirect
