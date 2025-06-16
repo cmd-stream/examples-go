@@ -5,7 +5,7 @@ go 1.23.0
 require (
 	github.com/brianvoe/gofakeit v3.18.0+incompatible
 	github.com/cmd-stream/cmd-stream-go v0.4.1-0.20250603154844-e7752b068651
-	github.com/cmd-stream/codec-mus-stream-go v0.0.0-20250603153934-780cd97e6d03
+	github.com/cmd-stream/codec-mus-stream-go v0.0.0-20250616162649-2e23e32a06bc
 	github.com/cmd-stream/core-go v0.0.0-20250602134159-c37a0a251158
 	github.com/cmd-stream/delegate-go v0.0.0-20250602164806-f3287deb62cd
 	github.com/cmd-stream/handler-go v0.0.0-20250602165153-3a7b05a77e33

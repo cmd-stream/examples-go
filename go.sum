@@ -4,8 +4,8 @@ github.com/cenkalti/backoff/v5 v5.0.2 h1:rIfFVxEf1QsI7E1ZHfp/B4DF/6QBAUhmgkxc0H7
 github.com/cenkalti/backoff/v5 v5.0.2/go.mod h1:rkhZdG3JZukswDf7f0cwqPNk4K0sa+F97BxZthm/crw=
 github.com/cmd-stream/cmd-stream-go v0.4.1-0.20250603154844-e7752b068651 h1:DmHbTqNH7bnUCacCD2+8U2J+hKjndhHydBekgiGPymk=
 github.com/cmd-stream/cmd-stream-go v0.4.1-0.20250603154844-e7752b068651/go.mod h1:c40s22zszF+LwbZT2RXMzdRNV5aaSXaR3ZXlRbrZbH8=
-github.com/cmd-stream/codec-mus-stream-go v0.0.0-20250603153934-780cd97e6d03 h1:wupxxx9A7s4vxc8wJ1B/LEF6RCGkaHRle57uIuPvMZo=
-github.com/cmd-stream/codec-mus-stream-go v0.0.0-20250603153934-780cd97e6d03/go.mod h1:03H8ySzHrHWr3fj/ztQRiXaXeChWojkdDruCXGjeALc=
+github.com/cmd-stream/codec-mus-stream-go v0.0.0-20250616162649-2e23e32a06bc h1:cW1PqLmpYCT6EEARozzicljQTkW99+HVOLBhQPvU9SY=
+github.com/cmd-stream/codec-mus-stream-go v0.0.0-20250616162649-2e23e32a06bc/go.mod h1:03H8ySzHrHWr3fj/ztQRiXaXeChWojkdDruCXGjeALc=
 github.com/cmd-stream/core-go v0.0.0-20250602134159-c37a0a251158 h1:twqosyjkrmi7I9g9EHOhDtrpOQtGEl3GTjNVjd6/TAM=
 github.com/cmd-stream/core-go v0.0.0-20250602134159-c37a0a251158/go.mod h1:cDnp3kDEWudlKh2Qx4mziDvfpR4WJftjMe0aH14+cNo=
 github.com/cmd-stream/delegate-go v0.0.0-20250602164806-f3287deb62cd h1:abXRxgeBtoaohsH3yoyTaMUZx38ARbdG6QuRRAkbQa0=

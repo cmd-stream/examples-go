@@ -22,7 +22,7 @@ func main() {
 	// Start server.
 	var (
 		greeter = receiver.NewGreeter("Hello", "incredible", " ")
-		codec   = cdc.NewServerCodec(results.ResultMUS, cmds.CmdMUS)
+		codec   = cdc.NewServerCodec(cmds.CmdMUS, results.ResultMUS)
 		wgS     = &sync.WaitGroup{}
 	)
 	server, err := StartServer(addr, codec, greeter, wgS)

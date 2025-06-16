@@ -21,7 +21,7 @@ func main() {
 
 	// Start server.
 	var (
-		codec   = cdc.NewServerCodec(results.ResultProtobuf, cmds.CmdProtobuf)
+		codec   = cdc.NewServerCodec(cmds.CmdProtobuf, results.ResultProtobuf)
 		greeter = receiver.NewGreeter("Hello", "incredible", " ")
 		wgS     = &sync.WaitGroup{}
 	)

@@ -23,7 +23,7 @@ func main() {
 		greeter = receiver.NewGreeter("Hello", "incredible", " ")
 		// Serializers for core.Cmd and core.Result interfaces allow building
 		// a server codec.
-		codec = cdc.NewServerCodec(results.ResultMUS, cmds.CmdMUS)
+		codec = cdc.NewServerCodec(cmds.CmdMUS, results.ResultMUS)
 		wgS   = &sync.WaitGroup{}
 	)
 
