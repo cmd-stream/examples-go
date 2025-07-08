@@ -12,16 +12,16 @@ import (
 type ServerCodec struct{}
 
 func (c ServerCodec) Encode(result core.Result, w transport.Writer) (n int, err error) {
-	n, err = ord.String.Marshal(string(result.(results.Echo)), w)
+	n, err = ord.String.Marshal(string(result.(results.EchoResult)), w)
 	return
 }
 
-func (c ServerCodec) Decode(r transport.Reader) (strCmd core.Cmd[struct{}], n int,
+func (c ServerCodec) Decode(r transport.Reader) (EchoCmd core.Cmd[struct{}], n int,
 	err error) {
 	str, n, err := ord.String.Unmarshal(r)
 	if err != nil {
 		return
 	}
-	strCmd = cmds.StrCmd(str)
+	EchoCmd = cmds.EchoCmd(str)
 	return
 }

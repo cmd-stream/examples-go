@@ -35,13 +35,13 @@ func main() {
 	// Send a Command and get the Result.
 	var (
 		str          = "Hello world"
-		strCmd       = cmds.StrCmd(str)
-		wantResult   = results.Echo(str)
+		EchoCmd      = cmds.EchoCmd(str)
+		wantResult   = results.EchoResult(str)
 		asyncResults = make(chan core.AsyncResult, 1)
 	)
-	_, _, err = client.Send(strCmd, asyncResults)
+	_, _, err = client.Send(EchoCmd, asyncResults)
 	assert.EqualError(err, nil)
-	assert.Equal((<-asyncResults).Result.(results.Echo), wantResult)
+	assert.Equal((<-asyncResults).Result.(results.EchoResult), wantResult)
 
 	// Close client.
 	err = client.Close()

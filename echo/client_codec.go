@@ -13,7 +13,7 @@ type ClientCodec struct{}
 
 func (c ClientCodec) Encode(cmd core.Cmd[struct{}], w transport.Writer) (
 	n int, err error) {
-	_, err = ord.String.Marshal(string(cmd.(cmds.StrCmd)), w)
+	_, err = ord.String.Marshal(string(cmd.(cmds.EchoCmd)), w)
 	return
 }
 
@@ -23,6 +23,6 @@ func (c ClientCodec) Decode(r transport.Reader) (result core.Result, n int,
 	if err != nil {
 		return
 	}
-	result = results.Echo(str)
+	result = results.EchoResult(str)
 	return
 }

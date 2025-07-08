@@ -8,10 +8,10 @@ import (
 	"github.com/cmd-stream/examples-go/echo/results"
 )
 
-type StrCmd string
+type EchoCmd string
 
-func (c StrCmd) Exec(ctx context.Context, seq core.Seq, at time.Time,
+func (c EchoCmd) Exec(ctx context.Context, seq core.Seq, at time.Time,
 	receiver struct{}, proxy core.Proxy) (err error) {
-	_, err = proxy.Send(seq, results.Echo(c))
+	_, err = proxy.Send(seq, results.EchoResult(c))
 	return
 }
