@@ -71,6 +71,6 @@ func main() {
 	// Generate
 	bs, err := g.Generate()
 	assert.EqualError(err, nil)
-	err = os.WriteFile("./mus-format.gen.go", bs, 0755)
+	err = os.WriteFile("./mus-format.gen.go", bs, 0644)
 	assert.EqualError(err, nil)
 }

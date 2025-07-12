@@ -17,7 +17,7 @@ import (
 )
 
 var (
-	stringpjCKPOpSΣ1cMi1skvVAxgwΞΞ = ord.NewValidStringSer(strops.WithLenValidator(com.ValidatorFn[int](ValidateLength)))
+	string6ΣpNH2vVpMrslPPDKNWvGwΞΞ = ord.NewValidStringSer(strops.WithLenValidator(com.ValidatorFn[int](ValidateLength)))
 )
 
 var SayHelloCmdMUS = sayHelloCmdMUS{}
@@ -25,20 +25,20 @@ var SayHelloCmdMUS = sayHelloCmdMUS{}
 type sayHelloCmdMUS struct{}
 
 func (s sayHelloCmdMUS) Marshal(v SayHelloCmd, w muss.Writer) (n int, err error) {
-	return stringpjCKPOpSΣ1cMi1skvVAxgwΞΞ.Marshal(v.str, w)
+	return string6ΣpNH2vVpMrslPPDKNWvGwΞΞ.Marshal(v.str, w)
 }
 
 func (s sayHelloCmdMUS) Unmarshal(r muss.Reader) (v SayHelloCmd, n int, err error) {
-	v.str, n, err = stringpjCKPOpSΣ1cMi1skvVAxgwΞΞ.Unmarshal(r)
+	v.str, n, err = string6ΣpNH2vVpMrslPPDKNWvGwΞΞ.Unmarshal(r)
 	return
 }
 
 func (s sayHelloCmdMUS) Size(v SayHelloCmd) (size int) {
-	return stringpjCKPOpSΣ1cMi1skvVAxgwΞΞ.Size(v.str)
+	return string6ΣpNH2vVpMrslPPDKNWvGwΞΞ.Size(v.str)
 }
 
 func (s sayHelloCmdMUS) Skip(r muss.Reader) (n int, err error) {
-	n, err = stringpjCKPOpSΣ1cMi1skvVAxgwΞΞ.Skip(r)
+	n, err = string6ΣpNH2vVpMrslPPDKNWvGwΞΞ.Skip(r)
 	return
 }
 
@@ -49,20 +49,20 @@ var SayFancyHelloCmdMUS = sayFancyHelloCmdMUS{}
 type sayFancyHelloCmdMUS struct{}
 
 func (s sayFancyHelloCmdMUS) Marshal(v SayFancyHelloCmd, w muss.Writer) (n int, err error) {
-	return stringpjCKPOpSΣ1cMi1skvVAxgwΞΞ.Marshal(v.str, w)
+	return string6ΣpNH2vVpMrslPPDKNWvGwΞΞ.Marshal(v.str, w)
 }
 
 func (s sayFancyHelloCmdMUS) Unmarshal(r muss.Reader) (v SayFancyHelloCmd, n int, err error) {
-	v.str, n, err = stringpjCKPOpSΣ1cMi1skvVAxgwΞΞ.Unmarshal(r)
+	v.str, n, err = string6ΣpNH2vVpMrslPPDKNWvGwΞΞ.Unmarshal(r)
 	return
 }
 
 func (s sayFancyHelloCmdMUS) Size(v SayFancyHelloCmd) (size int) {
-	return stringpjCKPOpSΣ1cMi1skvVAxgwΞΞ.Size(v.str)
+	return string6ΣpNH2vVpMrslPPDKNWvGwΞΞ.Size(v.str)
 }
 
 func (s sayFancyHelloCmdMUS) Skip(r muss.Reader) (n int, err error) {
-	n, err = stringpjCKPOpSΣ1cMi1skvVAxgwΞΞ.Skip(r)
+	n, err = string6ΣpNH2vVpMrslPPDKNWvGwΞΞ.Skip(r)
 	return
 }
 

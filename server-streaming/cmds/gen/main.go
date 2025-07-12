@@ -52,7 +52,7 @@ func main() {
 	}
 
 	// Write to file.
-	err = os.WriteFile("./mus-format.gen.go", bs, 0755)
+	err = os.WriteFile("./mus-format.gen.go", bs, 0644)
 	if err != nil {
 		panic(err)
 	}

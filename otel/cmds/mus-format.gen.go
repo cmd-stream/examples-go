@@ -15,8 +15,8 @@ import (
 )
 
 var (
-	map98ΣX2OmXAmD4Cz9Lor4fZwΞΞ = ord.NewMapSer[string, string](ord.String, ord.String)
-	ptrFjtJRFat1jHEPoFCkftt6gΞΞ = ord.NewPtrSer[map[string]string](map98ΣX2OmXAmD4Cz9Lor4fZwΞΞ)
+	mapCNQ2Z3H00RWLj7X082rdmAΞΞ = ord.NewMapSer[string, string](ord.String, ord.String)
+	ptrv5nnΔΣXZΔDA0nReL087SvgΞΞ = ord.NewPtrSer[map[string]string](mapCNQ2Z3H00RWLj7X082rdmAΞΞ)
 )
 
 var TraceSayHelloCmdMUS = traceSayHelloCmdMUS{}
@@ -24,7 +24,7 @@ var TraceSayHelloCmdMUS = traceSayHelloCmdMUS{}
 type traceSayHelloCmdMUS struct{}
 
 func (s traceSayHelloCmdMUS) Marshal(v otelcmd.TraceCmd[receiver.Greeter, hwcmds.SayHelloCmd], w muss.Writer) (n int, err error) {
-	n, err = ptrFjtJRFat1jHEPoFCkftt6gΞΞ.Marshal(v.MapCarrier, w)
+	n, err = ptrv5nnΔΣXZΔDA0nReL087SvgΞΞ.Marshal(v.MapCarrier, w)
 	if err != nil {
 		return
 	}
@@ -35,7 +35,7 @@ func (s traceSayHelloCmdMUS) Marshal(v otelcmd.TraceCmd[receiver.Greeter, hwcmds
 }
 
 func (s traceSayHelloCmdMUS) Unmarshal(r muss.Reader) (v otelcmd.TraceCmd[receiver.Greeter, hwcmds.SayHelloCmd], n int, err error) {
-	v.MapCarrier, n, err = ptrFjtJRFat1jHEPoFCkftt6gΞΞ.Unmarshal(r)
+	v.MapCarrier, n, err = ptrv5nnΔΣXZΔDA0nReL087SvgΞΞ.Unmarshal(r)
 	if err != nil {
 		return
 	}
@@ -46,12 +46,12 @@ func (s traceSayHelloCmdMUS) Unmarshal(r muss.Reader) (v otelcmd.TraceCmd[receiv
 }
 
 func (s traceSayHelloCmdMUS) Size(v otelcmd.TraceCmd[receiver.Greeter, hwcmds.SayHelloCmd]) (size int) {
-	size = ptrFjtJRFat1jHEPoFCkftt6gΞΞ.Size(v.MapCarrier)
+	size = ptrv5nnΔΣXZΔDA0nReL087SvgΞΞ.Size(v.MapCarrier)
 	return size + hwcmds.SayHelloCmdMUS.Size(v.Cmd)
 }
 
 func (s traceSayHelloCmdMUS) Skip(r muss.Reader) (n int, err error) {
-	n, err = ptrFjtJRFat1jHEPoFCkftt6gΞΞ.Skip(r)
+	n, err = ptrv5nnΔΣXZΔDA0nReL087SvgΞΞ.Skip(r)
 	if err != nil {
 		return
 	}
@@ -68,7 +68,7 @@ var TraceSayFancyHelloCmdMUS = traceSayFancyHelloCmdMUS{}
 type traceSayFancyHelloCmdMUS struct{}
 
 func (s traceSayFancyHelloCmdMUS) Marshal(v otelcmd.TraceCmd[receiver.Greeter, hwcmds.SayFancyHelloCmd], w muss.Writer) (n int, err error) {
-	n, err = ptrFjtJRFat1jHEPoFCkftt6gΞΞ.Marshal(v.MapCarrier, w)
+	n, err = ptrv5nnΔΣXZΔDA0nReL087SvgΞΞ.Marshal(v.MapCarrier, w)
 	if err != nil {
 		return
 	}
@@ -79,7 +79,7 @@ func (s traceSayFancyHelloCmdMUS) Marshal(v otelcmd.TraceCmd[receiver.Greeter, h
 }
 
 func (s traceSayFancyHelloCmdMUS) Unmarshal(r muss.Reader) (v otelcmd.TraceCmd[receiver.Greeter, hwcmds.SayFancyHelloCmd], n int, err error) {
-	v.MapCarrier, n, err = ptrFjtJRFat1jHEPoFCkftt6gΞΞ.Unmarshal(r)
+	v.MapCarrier, n, err = ptrv5nnΔΣXZΔDA0nReL087SvgΞΞ.Unmarshal(r)
 	if err != nil {
 		return
 	}
@@ -90,12 +90,12 @@ func (s traceSayFancyHelloCmdMUS) Unmarshal(r muss.Reader) (v otelcmd.TraceCmd[r
 }
 
 func (s traceSayFancyHelloCmdMUS) Size(v otelcmd.TraceCmd[receiver.Greeter, hwcmds.SayFancyHelloCmd]) (size int) {
-	size = ptrFjtJRFat1jHEPoFCkftt6gΞΞ.Size(v.MapCarrier)
+	size = ptrv5nnΔΣXZΔDA0nReL087SvgΞΞ.Size(v.MapCarrier)
 	return size + hwcmds.SayFancyHelloCmdMUS.Size(v.Cmd)
 }
 
 func (s traceSayFancyHelloCmdMUS) Skip(r muss.Reader) (n int, err error) {
-	n, err = ptrFjtJRFat1jHEPoFCkftt6gΞΞ.Skip(r)
+	n, err = ptrv5nnΔΣXZΔDA0nReL087SvgΞΞ.Skip(r)
 	if err != nil {
 		return
 	}
