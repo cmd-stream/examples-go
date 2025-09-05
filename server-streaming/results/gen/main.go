@@ -13,8 +13,8 @@ import (
 	introps "github.com/mus-format/musgen-go/options/interface"
 )
 
-// The main function generates the mus-format.gen.go file containing MUS
-// serialization code for SayHelloCmd, SayFancyHelloCmd, and Result.
+// Main generates the mus-format.gen.go file with MUS serialization code for
+// Greeting and the core.Result interface.
 func main() {
 	// Create a generator.
 	g, err := musgen.NewFileGenerator(
@@ -38,7 +38,9 @@ func main() {
 
 	// Add core.Result
 	err = g.AddInterface(reflect.TypeFor[core.Result](),
-		introps.WithImpl(greetingType))
+		introps.WithImpl(greetingType),
+		introps.WithMarshaller(),
+	)
 	if err != nil {
 		panic(err)
 	}

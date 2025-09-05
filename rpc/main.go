@@ -3,13 +3,17 @@ package main
 import (
 	"context"
 	"sync"
+	"time"
 
+	cmdstream "github.com/cmd-stream/cmd-stream-go"
+	srv "github.com/cmd-stream/cmd-stream-go/server"
 	"github.com/cmd-stream/examples-go/hello-world/cmds"
 	"github.com/cmd-stream/examples-go/hello-world/receiver"
 	"github.com/cmd-stream/examples-go/hello-world/results"
-	"github.com/cmd-stream/examples-go/hello-world/utils"
+	"github.com/cmd-stream/handler-go"
 
 	cdc "github.com/cmd-stream/codec-mus-stream-go"
+	sndr "github.com/cmd-stream/sender-go"
 	assert "github.com/ymz-ncnk/assert/panic"
 )
 
@@ -18,42 +22,45 @@ func init() {
 }
 
 func main() {
-	const addr = "127.0.0.1:9005"
+	const addr = "127.0.0.1:9000"
+	var (
+		greeter     = receiver.NewGreeter("Hello", "incredible", " ")
+		invoker     = srv.NewInvoker(greeter)
+		serverCodec = cdc.NewServerCodec(cmds.CmdMUS, results.ResultMUS)
+		clientCodec = cdc.NewClientCodec(cmds.CmdMUS, results.ResultMUS)
+		wgS         = &sync.WaitGroup{}
+	)
 
+	// Make server.
+	server := cmdstream.MakeServer(serverCodec, invoker,
+		srv.WithHandler(
+			handler.WithAt(),
+		),
+	)
 	// Start server.
-	var (
-		greeter = receiver.NewGreeter("Hello", "incredible", " ")
-		codec   = cdc.NewServerCodec(cmds.CmdMUS, results.ResultMUS)
-		wgS     = &sync.WaitGroup{}
-	)
-	server, err := utils.StartServer(addr, codec, greeter, wgS)
-	assert.EqualError(err, nil)
+	wgS.Add(1)
+	go func() {
+		server.ListenAndServe(addr)
+		wgS.Done()
+	}()
+	time.Sleep(100 * time.Millisecond)
 
-	SayHello(addr)
-
-	// Close server.
-	err = utils.CloseServer(server, wgS)
-	assert.Equal(err, nil)
-}
-
-func SayHello(addr string) {
-	// Create sender.
-	var (
-		clientsCount = 1
-		codec        = cdc.NewClientCodec(cmds.CmdMUS, results.ResultMUS)
-	)
-	sender, err := utils.MakeSender(addr, clientsCount, codec)
+	// Make sender.
+	sender, err := sndr.Make(addr, clientCodec)
 	assert.EqualError(err, nil)
 
 	// Create service.
 	service := GreeterService{sender}
-
-	// Call SayHello.
+	// Use service.
 	str, err := service.SayHello(context.Background(), "world")
 	assert.EqualError(err, nil)
 	assert.Equal(str, "Hello world")
 
 	// Close sender.
-	err = utils.CloseSender(sender)
+	err = sender.CloseAndWait(time.Second)
 	assert.EqualError(err, nil)
+	// Close server.
+	err = server.Close()
+	assert.EqualError(err, nil)
+	wgS.Wait()
 }

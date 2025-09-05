@@ -1,12 +1,19 @@
 package main
 
 import (
+	"context"
 	"sync"
+	"time"
 
+	cmdstream "github.com/cmd-stream/cmd-stream-go"
+	srv "github.com/cmd-stream/cmd-stream-go/server"
+	"github.com/cmd-stream/core-go"
 	"github.com/cmd-stream/examples-go/hello-world/receiver"
-	"github.com/cmd-stream/examples-go/hello-world/utils"
+	utils "github.com/cmd-stream/examples-go/hello-world/utils"
 	"github.com/cmd-stream/examples-go/hello-world_protobuf/cmds"
 	"github.com/cmd-stream/examples-go/hello-world_protobuf/results"
+	"github.com/cmd-stream/handler-go"
+	sndr "github.com/cmd-stream/sender-go"
 
 	cdc "github.com/cmd-stream/codec-mus-stream-go"
 	assert "github.com/ymz-ncnk/assert/panic"
@@ -17,57 +24,83 @@ func init() {
 }
 
 func main() {
-	const addr = "127.0.0.1:9002"
-
-	// Start server.
+	const addr = "127.0.0.1:9000"
 	var (
-		codec   = cdc.NewServerCodec(cmds.CmdProtobuf, results.ResultProtobuf)
-		greeter = receiver.NewGreeter("Hello", "incredible", " ")
-		wgS     = &sync.WaitGroup{}
+		greeter     = receiver.NewGreeter("Hello", "incredible", " ")
+		invoker     = srv.NewInvoker(greeter)
+		serverCodec = cdc.NewServerCodec(cmds.CmdProtobuf, results.ResultProtobuf)
+		clientCodec = cdc.NewClientCodec(cmds.CmdProtobuf, results.ResultProtobuf)
+		wgS         = &sync.WaitGroup{}
 	)
-	server, err := utils.StartServer(addr, codec, greeter, wgS)
-	assert.EqualError(err, nil)
 
-	SendCmds(addr)
+	server := cmdstream.MakeServer(serverCodec, invoker,
+		srv.WithHandler(
+			handler.WithAt(),
+		),
+	)
+	wgS.Add(1)
+	go func() {
+		server.ListenAndServe(addr)
+		wgS.Done()
+	}()
+	time.Sleep(100 * time.Millisecond)
 
-	// Close server.
-	err = utils.CloseServer(server, wgS)
+	sender, err := sndr.Make(addr, clientCodec)
 	assert.EqualError(err, nil)
+	SendCmds(sender)
+
+	err = sender.CloseAndWait(time.Second)
+	assert.EqualError(err, nil)
+	err = server.Close()
+	assert.EqualError(err, nil)
+	wgS.Wait()
 }
 
-func SendCmds(addr string) {
-	// Create sender.
-	codec := cdc.NewClientCodec(cmds.CmdProtobuf, results.ResultProtobuf)
-	sender, err := utils.MakeSender(addr, 2, codec)
-	assert.EqualError(err, nil)
+func SendCmds(sender sndr.Sender[receiver.Greeter]) {
+	wg := sync.WaitGroup{}
 
-	wgR := &sync.WaitGroup{}
-	// Send SayHelloCmd command.
-	wgR.Add(1)
+	// Send SayHelloCmd.
+	wg.Add(1)
 	go func() {
-		defer wgR.Done()
 		var (
-			sayHelloCmd  = cmds.NewSayHelloCmd("world")
-			wantGreeting = results.NewGreeting("Hello world")
+			cmd  = cmds.NewSayHelloCmd("world")
+			want = results.NewGreeting("Hello world")
 		)
-		err := utils.Exchange(sayHelloCmd, wantGreeting, sender)
+		greeting, err := SendCmd(cmd, sender)
 		assert.EqualError(err, nil)
+		assert.Equal(greeting.String(), want.String())
+		wg.Done()
 	}()
 
-	// Send SayFancyHelloCmd command.
-	wgR.Add(1)
+	// Send SayFancyHelloCmd.
+	wg.Add(1)
 	go func() {
-		defer wgR.Done()
 		var (
-			sayFancyHelloCmd = cmds.NewSayFancyHelloCmd("world")
-			wantGreeting     = results.NewGreeting("Hello incredible world")
+			cmd  = cmds.NewSayFancyHelloCmd("world")
+			want = results.NewGreeting("Hello incredible world")
 		)
-		err := utils.Exchange(sayFancyHelloCmd, wantGreeting, sender)
+		greeting, err := SendCmd(cmd, sender)
 		assert.EqualError(err, nil)
+		assert.Equal(greeting.String(), want.String())
+		wg.Done()
 	}()
-	wgR.Wait()
 
-	// Close sender.
-	err = utils.CloseSender(sender)
-	assert.EqualError(err, nil)
+	wg.Wait()
+}
+
+func SendCmd[T any](cmd core.Cmd[T], sender sndr.Sender[T]) (
+	greeting results.Greeting, err error,
+) {
+	var (
+		ctx, cancel = context.WithTimeout(context.Background(),
+			utils.ResultReceiveDuration)
+		deadline = time.Now().Add(utils.CmdSendDuration)
+	)
+	defer cancel()
+	result, err := sender.SendWithDeadline(ctx, cmd, deadline)
+	if err != nil {
+		return
+	}
+	greeting = result.(results.Greeting)
+	return
 }

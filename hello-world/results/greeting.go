@@ -2,6 +2,7 @@ package results
 
 import muss "github.com/mus-format/mus-stream-go"
 
+// Greeting implements core.Result and exts.MarshallerTypedMUS interfaces.
 type Greeting string
 
 func (g Greeting) LastOne() bool {

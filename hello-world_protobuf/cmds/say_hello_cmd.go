@@ -18,7 +18,7 @@ func NewSayHelloCmd(str string) SayHelloCmd {
 	}
 }
 
-// SayHelloCmd implements core.Cmd and Marshaller interfaces.
+// SayHelloCmd implements core.Cmd and exts.MarshallerTypedProtobuf interfaces.
 type SayHelloCmd struct {
 	*SayHelloData
 }
@@ -37,7 +37,8 @@ func (c SayHelloCmd) Exec(ctx context.Context, seq core.Seq, at time.Time,
 }
 
 func (c SayHelloCmd) MarshalTypedProtobuf(w muss.Writer) (n int,
-	err error) {
+	err error,
+) {
 	return SayHelloCmdDTS.Marshal(c, w)
 }
 

@@ -2,28 +2,30 @@ package results
 
 import muss "github.com/mus-format/mus-stream-go"
 
+// NewGreeting creates a new Greeting.
 func NewGreeting(str string) Greeting {
 	return Greeting{
 		GreetingData: &GreetingData{Str: str},
 	}
 }
 
+// Greeting implements core.Result and exts.MarshallerTypedProtobuf interfaces.
 type Greeting struct {
 	*GreetingData
 }
 
-func (r Greeting) String() string {
-	return r.GreetingData.Str
+func (g Greeting) String() string {
+	return g.Str
 }
 
-func (r Greeting) LastOne() bool {
+func (g Greeting) LastOne() bool {
 	return true
 }
 
-func (c Greeting) MarshalTypedProtobuf(w muss.Writer) (n int, err error) {
-	return GreetingDTS.Marshal(c, w)
+func (g Greeting) MarshalTypedProtobuf(w muss.Writer) (n int, err error) {
+	return GreetingDTS.Marshal(g, w)
 }
 
-func (c Greeting) SizeTypedProtobuf() (size int) {
-	return GreetingDTS.Size(c)
+func (g Greeting) SizeTypedProtobuf() (size int) {
+	return GreetingDTS.Size(g)
 }

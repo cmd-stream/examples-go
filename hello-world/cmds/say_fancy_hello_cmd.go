@@ -15,14 +15,15 @@ func NewSayFancyHelloCmd(str string) SayFancyHelloCmd {
 	return SayFancyHelloCmd{str}
 }
 
-// SayFancyHelloCmd implements the core.Cmd[Greeter] interface and produces
-// greetings like "Hello incredible world".
+// SayFancyHelloCmd implements core.Cmd and exts.MarshallerTypedMUS interfaces.
+// Produces greetings like "Hello incredible world".
 type SayFancyHelloCmd struct {
 	str string
 }
 
 func (c SayFancyHelloCmd) Exec(ctx context.Context, seq core.Seq, at time.Time,
-	greeter receiver.Greeter, proxy core.Proxy) (err error) {
+	greeter receiver.Greeter, proxy core.Proxy,
+) (err error) {
 	// SayFancyHelloCmd differs from SayHelloCmd in the way it uses the
 	// Receiver.
 	var (

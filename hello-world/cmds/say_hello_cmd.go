@@ -15,14 +15,15 @@ func NewSayHelloCmd(str string) SayHelloCmd {
 	return SayHelloCmd{str}
 }
 
-// SayHelloCmd implements the core.Cmd[Greeter] interface and produces
-// greetings like "Hello world".
+// SayHelloCmd implements core.Cmd and exts.MarshallerTypedMUS interfaces.
+// Produces greetings like "Hello world".
 type SayHelloCmd struct {
 	str string
 }
 
 func (c SayHelloCmd) Exec(ctx context.Context, seq core.Seq, at time.Time,
-	greeter receiver.Greeter, proxy core.Proxy) (err error) {
+	greeter receiver.Greeter, proxy core.Proxy,
+) (err error) {
 	var (
 		greeting = results.Greeting(
 			greeter.Join(greeter.Interjection(), c.str),

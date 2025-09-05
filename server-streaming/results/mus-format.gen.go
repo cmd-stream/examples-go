@@ -4,9 +4,11 @@ package results
 
 import (
 	"fmt"
+	"reflect"
 
 	"github.com/cmd-stream/core-go"
 	dts "github.com/mus-format/dts-stream-go"
+	exts "github.com/mus-format/ext-mus-stream-go"
 	muss "github.com/mus-format/mus-stream-go"
 	"github.com/mus-format/mus-stream-go/ord"
 )
@@ -60,12 +62,10 @@ var ResultMUS = resultMUS{}
 type resultMUS struct{}
 
 func (s resultMUS) Marshal(v core.Result, w muss.Writer) (n int, err error) {
-	switch t := v.(type) {
-	case Greeting:
-		return GreetingDTS.Marshal(t, w)
-	default:
-		panic(fmt.Sprintf("unexpected %v type", t))
+	if m, ok := v.(exts.MarshallerTypedMUS); ok {
+		return m.MarshalTypedMUS(w)
 	}
+	panic(fmt.Sprintf("%v doesn't implement the exts.MarshallerTypedMUS interface", reflect.TypeOf(v)))
 }
 
 func (s resultMUS) Unmarshal(r muss.Reader) (v core.Result, n int, err error) {
@@ -86,12 +86,10 @@ func (s resultMUS) Unmarshal(r muss.Reader) (v core.Result, n int, err error) {
 }
 
 func (s resultMUS) Size(v core.Result) (size int) {
-	switch t := v.(type) {
-	case Greeting:
-		return GreetingDTS.Size(t)
-	default:
-		panic(fmt.Sprintf("unexpected %v type", t))
+	if m, ok := v.(exts.MarshallerTypedMUS); ok {
+		return m.SizeTypedMUS()
 	}
+	panic(fmt.Sprintf("%v doesn't implement the exts.MarshallerTypedMUS interface", reflect.TypeOf(v)))
 }
 
 func (s resultMUS) Skip(r muss.Reader) (n int, err error) {

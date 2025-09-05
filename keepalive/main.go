@@ -4,13 +4,25 @@ import (
 	"sync"
 	"time"
 
+	cmdstream "github.com/cmd-stream/cmd-stream-go"
+	cln "github.com/cmd-stream/cmd-stream-go/client"
+	grp "github.com/cmd-stream/cmd-stream-go/group"
+	srv "github.com/cmd-stream/cmd-stream-go/server"
+	dcln "github.com/cmd-stream/delegate-go/client"
 	"github.com/cmd-stream/examples-go/hello-world/cmds"
 	"github.com/cmd-stream/examples-go/hello-world/receiver"
 	"github.com/cmd-stream/examples-go/hello-world/results"
 	"github.com/cmd-stream/examples-go/hello-world/utils"
+	"github.com/cmd-stream/handler-go"
+	sndr "github.com/cmd-stream/sender-go"
 
 	cdc "github.com/cmd-stream/codec-mus-stream-go"
 	assert "github.com/ymz-ncnk/assert/panic"
+)
+
+const (
+	KeepaliveTime  = 200 * time.Millisecond
+	KeepaliveIntvl = 200 * time.Millisecond
 )
 
 func init() {
@@ -18,65 +30,92 @@ func init() {
 }
 
 func main() {
-	const addr = "127.0.0.1:9003"
+	const addr = "127.0.0.1:9000"
+	var (
+		greeter     = receiver.NewGreeter("Hello", "incredible", " ")
+		invoker     = srv.NewInvoker(greeter)
+		serverCodec = cdc.NewServerCodec(cmds.CmdMUS, results.ResultMUS)
+		clientCodec = cdc.NewClientCodec(cmds.CmdMUS, results.ResultMUS)
+		wgS         = &sync.WaitGroup{}
+	)
 
+	// Make server.
+	server := cmdstream.MakeServer(serverCodec, invoker,
+		srv.WithHandler(
+			handler.WithCmdReceiveDuration(utils.CmdReceiveDuration),
+			handler.WithAt(),
+		),
+	)
 	// Start server.
-	var (
-		receiver = receiver.NewGreeter("Hello", "incredible", " ")
-		codec    = cdc.NewServerCodec(cmds.CmdMUS, results.ResultMUS)
-		wgS      = &sync.WaitGroup{}
-	)
-	server, err := utils.StartServer(addr, codec, receiver, wgS)
-	assert.EqualError(err, nil)
-
-	SendCmds(addr)
-
-	// Close server.
-	err = utils.CloseServer(server, wgS)
-	assert.EqualError(err, nil)
-}
-
-func SendCmds(addr string) {
-	// Create keepalive sender.
-	var (
-		codec = cdc.NewClientCodec(cmds.CmdMUS, results.ResultMUS)
-		wgR   = &sync.WaitGroup{}
-	)
-	sender, err := MakeKeepaliveSender(addr, 1, codec)
-	assert.EqualError(err, nil)
-
-	// Send SayHelloCmd command.
-	wgR.Add(1)
+	wgS.Add(1)
 	go func() {
-		defer wgR.Done()
-		var (
-			sayHelloCmd  = cmds.NewSayHelloCmd("world")
-			wantGreeting = results.Greeting("Hello world")
-		)
-		err := utils.Exchange(sayHelloCmd, wantGreeting, sender)
-		assert.EqualError(err, nil)
+		server.ListenAndServe(addr)
+		wgS.Done()
 	}()
+	time.Sleep(100 * time.Millisecond)
 
-	// Ping-Pong time... When there are no Commands to send, clients of the sender
-	// send a predefined PingCmd.
-	time.Sleep(2 * utils.CmdReceiveDuration)
-
-	// Send a command again after the long delay to check if the connection is
-	// still alive.
-	// Send SayFancyHelloCmd command.
-	wgR.Add(1)
-	go func() {
-		defer wgR.Done()
-		var (
-			sayFancyHelloCmd = cmds.NewSayFancyHelloCmd("world")
-			wantGreeting     = results.Greeting("Hello incredible world")
-		)
-		err := utils.Exchange(sayFancyHelloCmd, wantGreeting, sender)
-		assert.EqualError(err, nil)
-	}()
-	wgR.Wait()
+	// Make keepalive sender.
+	sender, err := MakeKeepaliveSender(addr, clientCodec)
+	assert.EqualError(err, nil)
+	// Send Commands.
+	SendCmds(sender)
 
 	// Close sender.
-	err = utils.CloseSender(sender)
+	err = sender.CloseAndWait(time.Second)
 	assert.EqualError(err, nil)
+	// Close server.
+	err = server.Close()
+	assert.EqualError(err, nil)
+	wgS.Wait()
+}
+
+func MakeKeepaliveSender(addr string, codec cln.Codec[receiver.Greeter]) (
+	sender sndr.Sender[receiver.Greeter], err error,
+) {
+	return sndr.Make(addr, codec,
+		sndr.WithGroup(
+			grp.WithClient[receiver.Greeter](
+				cln.WithKeepalive(
+					dcln.WithKeepaliveTime(KeepaliveTime),
+					dcln.WithKeepaliveIntvl(KeepaliveIntvl),
+				),
+			),
+		),
+	)
+}
+
+func SendCmds(sender sndr.Sender[receiver.Greeter]) {
+	wg := sync.WaitGroup{}
+
+	// Send SayHelloCmd.
+	wg.Add(1)
+	go func() {
+		var (
+			cmd  = cmds.NewSayHelloCmd("world")
+			want = results.Greeting("Hello world")
+		)
+		greeting, err := utils.SendCmd(cmd, sender)
+		assert.EqualError(err, nil)
+		assert.Equal(greeting, want)
+		wg.Done()
+	}()
+
+	// Ping-Pong time... When there are no Commands to send, clients will send
+	// PingCmd.
+	time.Sleep(2 * utils.CmdReceiveDuration)
+
+	// Send SayFancyHelloCmd.
+	wg.Add(1)
+	go func() {
+		var (
+			cmd  = cmds.NewSayFancyHelloCmd("world")
+			want = results.Greeting("Hello incredible world")
+		)
+		greeting, err := utils.SendCmd(cmd, sender)
+		assert.EqualError(err, nil)
+		assert.Equal(greeting, want)
+		wg.Done()
+	}()
+
+	wg.Wait()
 }

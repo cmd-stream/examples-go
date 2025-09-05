@@ -14,8 +14,8 @@ import (
 	introps "github.com/mus-format/musgen-go/options/interface"
 )
 
-// The main function generates the mus-format.gen.go file containing MUS
-// serialization code for SayHelloCmd, SayFancyHelloCmd, and Result.
+// Main generates the mus-format.gen.go file with MUS serialization code for
+// SayFancyHelloMultiCmd and the core.Cmd interface.
 func main() {
 	// Create a generator.
 	g, err := musgen.NewFileGenerator(

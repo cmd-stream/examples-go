@@ -16,7 +16,8 @@ func NewSayFancyHelloMultiCmd(str string) SayFancyHelloMultiCmd {
 	return SayFancyHelloMultiCmd{str}
 }
 
-// SayFancyHelloMultiCmd implements core.Cmd and Marshaller interfaces.
+// SayFancyHelloMultiCmd implements core.Cmd and exts.MarshallerTypedMUS
+// interfaces.
 type SayFancyHelloMultiCmd struct {
 	str string
 }
