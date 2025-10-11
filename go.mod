@@ -1,6 +1,6 @@
 module github.com/cmd-stream/examples-go
 
-go 1.23.0
+go 1.24.1
 
 require (
 	github.com/brianvoe/gofakeit v3.18.0+incompatible
@@ -15,9 +15,9 @@ require (
 	github.com/mus-format/ext-mus-stream-go v0.0.0-20250424190117-02f7e9442021
 	github.com/mus-format/ext-protobuf-stream-go v0.0.0-20250423190029-59211887ef2c
 	github.com/mus-format/mus-stream-go v0.7.0
-	github.com/mus-format/musgen-go v0.1.1-0.20250503161017-3cab6c743d6f
+	github.com/mus-format/musgen-go v0.2.2
 	github.com/ymz-ncnk/assert v0.0.0-20250528151733-c41b2fca7933
-	github.com/ymz-ncnk/circbrk-go v0.0.0-20250531215722-a60b90b3171f
+	github.com/ymz-ncnk/circbrk-go v0.0.0-20250912145433-3ecf61f801af
 	go.opentelemetry.io/otel v1.36.0
 	go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetricgrpc v1.36.0
 	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.36.0
@@ -33,7 +33,7 @@ require (
 require (
 	github.com/cenkalti/backoff/v5 v5.0.2 // indirect
 	github.com/cmd-stream/otelcmd-stream-go v0.1.0
-	github.com/cmd-stream/sender-go v0.0.0-20250905224940-48fe74f4f43a
+	github.com/cmd-stream/sender-go v0.0.0-20251011154257-b0ae4a881c45
 	github.com/go-logr/logr v1.4.2 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
 	github.com/google/uuid v1.6.0 // indirect

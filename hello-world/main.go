@@ -140,6 +140,36 @@ func MakeSender(addr string, codec cdc.ClientCodec[receiver.Greeter]) (
 		// ),
 		sndr.WithClientsCount[receiver.Greeter](2),
 	)
+
+	// // If you want a sender that takes care of connection management for you,
+	// // use the handy ResilientConfig. It configures the sender to
+	// // automatically handle keepalives, reconnects, and circuit breaker
+	// // behavior. As long as the server is alive, you’ll stay connected!
+	// cfg := sender.ResilientConfig[receiver.Greeter]{
+	//   KeepaliveTime:               30 * time.Second,
+	//   KeepaliveIntvl:              10 * time.Second,
+	//   CircuitBreakerWindowSize:    20,
+	//   CircuitBreakerFailureRate:   0.5,
+	//   CircuitBreakerOpenDuration:  30 * time.Second,
+	//   CircuitBreakerSuccessThreshold: 2,
+	//   // Optional HooksFactory to observe or modify sender behavior.
+	//   // HooksFactory: ...
+	// }
+	// return sndr.Make(addr, codec,
+	//   append(
+	//     cnf.ToOptions(),
+	//
+	//     sndr.WithGroup(
+	//       grp.WithClient[rcvr.InventoryManager](
+	//         cln.WithCore(
+	//           ccln.WithUnexpectedResultCallback(func(seq core.Seq, result core.Result) {
+	//             log.Printf("client: unexpected result: seq %v, result %v\n", seq, result)
+	//           }),
+	//         ),
+	//       ),
+	//     ),
+	//   )...,
+	// )
 }
 
 func SendCmds(sender sndr.Sender[receiver.Greeter]) {

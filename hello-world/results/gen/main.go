@@ -23,7 +23,7 @@ func init() {
 // core.Cmd and core.Result interfaces.
 func main() {
 	// Create a generator.
-	g, err := musgen.NewFileGenerator(
+	g, err := musgen.NewCodeGenerator(
 		genops.WithPkgPath("github.com/cmd-stream/examples-go/hello-world/results"),
 		genops.WithStream(), // We're going to generate streaming code.
 	)

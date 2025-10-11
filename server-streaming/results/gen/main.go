@@ -17,7 +17,7 @@ import (
 // Greeting and the core.Result interface.
 func main() {
 	// Create a generator.
-	g, err := musgen.NewFileGenerator(
+	g, err := musgen.NewCodeGenerator(
 		genops.WithPkgPath("github.com/cmd-stream/examples-go/server-streaming/results"),
 		genops.WithStream())
 	if err != nil {

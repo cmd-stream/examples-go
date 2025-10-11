@@ -83,7 +83,7 @@ func MakeReconnectSender(addr string, codec cln.Codec[receiver.Greeter]) (
 	sender sndr.Sender[receiver.Greeter], err error,
 ) {
 	return sndr.Make(addr, codec,
-		sndr.WithGroup[receiver.Greeter](
+		sndr.WithGroup(
 			grp.WithReconnect[receiver.Greeter](),
 		),
 	)

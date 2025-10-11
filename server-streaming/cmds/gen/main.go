@@ -18,7 +18,7 @@ import (
 // SayFancyHelloMultiCmd and the core.Cmd interface.
 func main() {
 	// Create a generator.
-	g, err := musgen.NewFileGenerator(
+	g, err := musgen.NewCodeGenerator(
 		genops.WithPkgPath("github.com/cmd-stream/examples-go/server-streaming/cmds"),
 		genops.WithImport("github.com/cmd-stream/examples-go/hello-world/receiver"),
 		genops.WithStream())
