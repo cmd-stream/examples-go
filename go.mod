@@ -33,7 +33,7 @@ require (
 require (
 	github.com/cenkalti/backoff/v5 v5.0.2 // indirect
 	github.com/cmd-stream/otelcmd-stream-go v0.1.0
-	github.com/cmd-stream/sender-go v0.0.0-20251011154257-b0ae4a881c45
+	github.com/cmd-stream/sender-go v0.0.0-20251011192948-744d9ef75caa
 	github.com/go-logr/logr v1.4.2 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
 	github.com/google/uuid v1.6.0 // indirect

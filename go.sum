@@ -14,8 +14,8 @@ github.com/cmd-stream/handler-go v0.0.0-20250704193654-7a2ca8f254de h1:euJm4p5u1
 github.com/cmd-stream/handler-go v0.0.0-20250704193654-7a2ca8f254de/go.mod h1:s6zMjLmVETtkFzeY4dTKMDPLpvaGCVxXSAqjxY3ylzs=
 github.com/cmd-stream/otelcmd-stream-go v0.1.0 h1:9Sv6ahyYbKR7ZjTHbQGwhjZxPUHQ6NYGtuZjaV+jHTk=
 github.com/cmd-stream/otelcmd-stream-go v0.1.0/go.mod h1:E3F7IgKvYY3YFxEuBrFVTOvr0fL3o3a8khrMEOtXEeQ=
-github.com/cmd-stream/sender-go v0.0.0-20251011154257-b0ae4a881c45 h1:3ItwTcSZmkHaCOF9HixGcdIvkBk02JMB9+acQ0xlHvc=
-github.com/cmd-stream/sender-go v0.0.0-20251011154257-b0ae4a881c45/go.mod h1:CBVSqT5gmXD6O05MJ2KUNFJ5s2nJhQZV2JfODqGTbaY=
+github.com/cmd-stream/sender-go v0.0.0-20251011192948-744d9ef75caa h1:+MxLa8VhGBNXVru1i1je6QQun7G/Yz6hTjKa48TUTP8=
+github.com/cmd-stream/sender-go v0.0.0-20251011192948-744d9ef75caa/go.mod h1:CBVSqT5gmXD6O05MJ2KUNFJ5s2nJhQZV2JfODqGTbaY=
 github.com/cmd-stream/transport-go v0.0.0-20250704194107-8696d9c42b6d h1:dqY3biI/g6a+8jhUBqR9PRF9c6+PjG9jW2B2naD8IkM=
 github.com/cmd-stream/transport-go v0.0.0-20250704194107-8696d9c42b6d/go.mod h1:Znr98v6yPzHrP+ZAaDKu4c7T+ew8kuoLXzwhN/JEFZg=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
