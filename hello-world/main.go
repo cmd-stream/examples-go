@@ -11,18 +11,19 @@ import (
 	"github.com/cmd-stream/core-go"
 	"github.com/cmd-stream/handler-go"
 
-	cln "github.com/cmd-stream/cmd-stream-go/client"
 	srv "github.com/cmd-stream/cmd-stream-go/server"
 
-	grp "github.com/cmd-stream/cmd-stream-go/group"
 	ccln "github.com/cmd-stream/core-go/client"
 	csrv "github.com/cmd-stream/core-go/server"
 	"github.com/cmd-stream/examples-go/hello-world/cmds"
-	"github.com/cmd-stream/examples-go/hello-world/receiver"
+	rcvr "github.com/cmd-stream/examples-go/hello-world/receiver"
 	"github.com/cmd-stream/examples-go/hello-world/results"
 	"github.com/cmd-stream/examples-go/hello-world/utils"
 	sndr "github.com/cmd-stream/sender-go"
 	assert "github.com/ymz-ncnk/assert/panic"
+
+	cln "github.com/cmd-stream/cmd-stream-go/client"
+	grp "github.com/cmd-stream/cmd-stream-go/group"
 )
 
 func init() {
@@ -32,7 +33,7 @@ func init() {
 func main() {
 	const addr = "127.0.0.1:9000"
 	var (
-		greeter = receiver.NewGreeter("Hello", "incredible", " ")
+		greeter = rcvr.NewGreeter("Hello", "incredible", " ")
 		invoker = srv.NewInvoker(greeter)
 		// Serializers of core.Cmd and core.Result interfaces allow building
 		// server/client codecs.
@@ -67,8 +68,8 @@ func main() {
 	wgS.Wait()
 }
 
-func MakeServer(codec cdc.ServerCodec[receiver.Greeter],
-	invoker handler.Invoker[receiver.Greeter],
+func MakeServer(codec cdc.ServerCodec[rcvr.Greeter],
+	invoker handler.Invoker[rcvr.Greeter],
 ) *csrv.Server {
 	return cmdstream.MakeServer(codec, invoker,
 		// // ServerInfo is optional and helps the client verify compatibility with the
@@ -104,12 +105,12 @@ func MakeServer(codec cdc.ServerCodec[receiver.Greeter],
 	)
 }
 
-func MakeSender(addr string, codec cdc.ClientCodec[receiver.Greeter]) (
-	sender sndr.Sender[receiver.Greeter], err error,
+func MakeSender(addr string, codec cdc.ClientCodec[rcvr.Greeter]) (
+	sender sndr.Sender[rcvr.Greeter], err error,
 ) {
 	return sndr.Make(addr, codec,
 		sndr.WithGroup(
-			grp.WithClient[receiver.Greeter](
+			grp.WithClient[rcvr.Greeter](
 				// // Optional ServerInfo.
 				// cln.WithServerInfo(...),
 
@@ -136,43 +137,49 @@ func MakeSender(addr string, codec cdc.ClientCodec[receiver.Greeter]) (
 		// // extend or modify the sender's behavior, for example, by adding
 		// // logging, metrics, retries, or circuit breaker logic.
 		// sndr.WithSender(
-		//  sndr.WithHooksFactory[receiver.Greeter](...),
+		//  sndr.WithHooksFactory[rcvr.Greeter](...),
 		// ),
-		sndr.WithClientsCount[receiver.Greeter](2),
+		sndr.WithClientsCount[rcvr.Greeter](2),
 	)
 
 	// // If you want a sender that takes care of connection management for you,
-	// // use the handy ResilientConfig. It configures the sender to
-	// // automatically handle keepalives, reconnects, and circuit breaker
-	// // behavior. As long as the server is alive, you’ll stay connected!
-	// cfg := sender.ResilientConfig[receiver.Greeter]{
-	//   KeepaliveTime:               30 * time.Second,
-	//   KeepaliveIntvl:              10 * time.Second,
-	//   CircuitBreakerWindowSize:    20,
-	//   CircuitBreakerFailureRate:   0.5,
-	//   CircuitBreakerOpenDuration:  30 * time.Second,
-	//   CircuitBreakerSuccessThreshold: 2,
-	//   // Optional HooksFactory to observe or modify sender behavior.
-	//   // HooksFactory: ...
-	// }
+	// // use this setup. It configures the sender to automatically handle
+	// // keepalives, reconnects, and circuit breaker behavior, so as long as
+	// // the server is alive, you’ll stay connected.
+	// var (
+	// 	cb = circbrk.New(circbrk.WithWindowSize(20),
+	// 		circbrk.WithFailureRate(0.5),
+	// 		circbrk.WithOpenDuration(30*time.Second),
+	// 		circbrk.WithSuccessThreshold(2),
+	// 	)
+	// 	hooksFactory = hks.NewCircuitBreakerHooksFactory(cb,
+	// 		hks.NoopHooksFactory[rcvr.Greeter]{})
+	// )
 	// return sndr.Make(addr, codec,
-	//   append(
-	//     cnf.ToOptions(),
-	//
-	//     sndr.WithGroup(
-	//       grp.WithClient[rcvr.InventoryManager](
-	//         cln.WithCore(
-	//           ccln.WithUnexpectedResultCallback(func(seq core.Seq, result core.Result) {
-	//             log.Printf("client: unexpected result: seq %v, result %v\n", seq, result)
-	//           }),
-	//         ),
-	//       ),
-	//     ),
-	//   )...,
+	// 	sndr.WithGroup(
+	// 		grp.WithReconnect[rcvr.Greeter](),
+	// 		grp.WithClient[rcvr.Greeter](
+	// 			cln.WithCore(
+	// 				ccln.WithUnexpectedResultCallback(
+	// 					func(seq core.Seq, result core.Result) {
+	// 						log.Printf("client: unexpected result: seq %v, result %v\n", seq, result)
+	// 					},
+	// 				),
+	// 			),
+	// 			cln.WithKeepalive(
+	// 				dcln.WithKeepaliveTime(30*time.Second),
+	// 				dcln.WithKeepaliveIntvl(10*time.Second),
+	// 			),
+	// 		),
+	// 	),
+	// 	sndr.WithSender(
+	// 		sndr.WithHooksFactory(hooksFactory),
+	// 	),
+	// 	sndr.WithClientsCount[rcvr.Greeter](2),
 	// )
 }
 
-func SendCmds(sender sndr.Sender[receiver.Greeter]) {
+func SendCmds(sender sndr.Sender[rcvr.Greeter]) {
 	wg := sync.WaitGroup{}
 
 	// Send SayHelloCmd.
