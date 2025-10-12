@@ -2,11 +2,8 @@ package receiver
 
 import "strings"
 
-// Greeter serves as the application's "Receiver" or application layer.
-//
-// It holds the core application logic, decoupled from Commands and network
-// transport. Defining it as an interface ensures both the Greeter
-// implementation and its dependent Commands can be easily tested in isolation.
+// Greeter is the application's Receiver. It defines the core logic,
+// kept independent from Commands and network transport.
 type Greeter interface {
 	// Interjection returns the fixed interjection (e.g., "Hi").
 	Interjection() string
