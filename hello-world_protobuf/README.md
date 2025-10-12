@@ -1,6 +1,6 @@
 # hello-world_protobuf
 
-This example demonstrates how to use cmd-stream-go with Protocol Buffers.
+This example demonstrates how to use `cmd-stream-go` with Protocol Buffers.
 
 ## Differences From the hello-world Example
 

@@ -8,7 +8,7 @@ import (
 	cmdstream "github.com/cmd-stream/cmd-stream-go"
 	srv "github.com/cmd-stream/cmd-stream-go/server"
 	"github.com/cmd-stream/examples-go/hello-world/cmds"
-	"github.com/cmd-stream/examples-go/hello-world/receiver"
+	rcvr "github.com/cmd-stream/examples-go/hello-world/receiver"
 	"github.com/cmd-stream/examples-go/hello-world/results"
 	"github.com/cmd-stream/handler-go"
 
@@ -24,8 +24,8 @@ func init() {
 func main() {
 	const addr = "127.0.0.1:9000"
 	var (
-		greeter     = receiver.NewGreeter("Hello", "incredible", " ")
-		invoker     = srv.NewInvoker(greeter)
+		greeter     = rcvr.NewGreeter("Hello", "incredible", " ")
+		invoker     = srv.NewInvoker[rcvr.Greeter](greeter)
 		serverCodec = cdc.NewServerCodec(cmds.CmdMUS, results.ResultMUS)
 		clientCodec = cdc.NewClientCodec(cmds.CmdMUS, results.ResultMUS)
 		wgS         = &sync.WaitGroup{}

@@ -1,6 +1,6 @@
 # otel
 
-This example demonstrates how cmd-stream-go can be used with a circuit breaker
+This example demonstrates how `cmd-stream-go` can be used with a circuit breaker
 and OpenTelemetry. It runs for 90 seconds, during which the client sends both
 regular and traceable Commands to the server. The server is available only
 during the first and last 30 seconds. During the middle 30 seconds, it is down,
@@ -35,6 +35,13 @@ From the `otel/monitoring` folder, run:
 
 ```bash
 docker compose up -d
+```
+
+**Troubleshooting Note:** If the command above fails, try running it with
+`sudo` at the beginning, or use the older Docker Compose syntax:
+
+```bash
+sudo docker-compose up -d
 ```
 
 From the `otel` folder, run:

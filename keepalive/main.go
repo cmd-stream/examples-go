@@ -10,7 +10,7 @@ import (
 	srv "github.com/cmd-stream/cmd-stream-go/server"
 	dcln "github.com/cmd-stream/delegate-go/client"
 	"github.com/cmd-stream/examples-go/hello-world/cmds"
-	"github.com/cmd-stream/examples-go/hello-world/receiver"
+	rcvr "github.com/cmd-stream/examples-go/hello-world/receiver"
 	"github.com/cmd-stream/examples-go/hello-world/results"
 	"github.com/cmd-stream/examples-go/hello-world/utils"
 	"github.com/cmd-stream/handler-go"
@@ -32,8 +32,8 @@ func init() {
 func main() {
 	const addr = "127.0.0.1:9000"
 	var (
-		greeter     = receiver.NewGreeter("Hello", "incredible", " ")
-		invoker     = srv.NewInvoker(greeter)
+		greeter     = rcvr.NewGreeter("Hello", "incredible", " ")
+		invoker     = srv.NewInvoker[rcvr.Greeter](greeter)
 		serverCodec = cdc.NewServerCodec(cmds.CmdMUS, results.ResultMUS)
 		clientCodec = cdc.NewClientCodec(cmds.CmdMUS, results.ResultMUS)
 		wgS         = &sync.WaitGroup{}
@@ -69,12 +69,12 @@ func main() {
 	wgS.Wait()
 }
 
-func MakeKeepaliveSender(addr string, codec cln.Codec[receiver.Greeter]) (
-	sender sndr.Sender[receiver.Greeter], err error,
+func MakeKeepaliveSender(addr string, codec cln.Codec[rcvr.Greeter]) (
+	sender sndr.Sender[rcvr.Greeter], err error,
 ) {
 	return sndr.Make(addr, codec,
 		sndr.WithGroup(
-			grp.WithClient[receiver.Greeter](
+			grp.WithClient[rcvr.Greeter](
 				cln.WithKeepalive(
 					dcln.WithKeepaliveTime(KeepaliveTime),
 					dcln.WithKeepaliveIntvl(KeepaliveIntvl),
@@ -84,7 +84,7 @@ func MakeKeepaliveSender(addr string, codec cln.Codec[receiver.Greeter]) (
 	)
 }
 
-func SendCmds(sender sndr.Sender[receiver.Greeter]) {
+func SendCmds(sender sndr.Sender[rcvr.Greeter]) {
 	wg := sync.WaitGroup{}
 
 	// Send SayHelloCmd.

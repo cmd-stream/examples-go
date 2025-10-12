@@ -24,4 +24,3 @@ group, err := cmdstream.MakeClientGroup(1, codec, connFactory,
   ...
 )
 ```
-

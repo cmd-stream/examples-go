@@ -34,7 +34,7 @@ func main() {
 	const addr = "127.0.0.1:9000"
 	var (
 		greeter = rcvr.NewGreeter("Hello", "incredible", " ")
-		invoker = srv.NewInvoker(greeter)
+		invoker = srv.NewInvoker[rcvr.Greeter](greeter)
 		// Serializers of core.Cmd and core.Result interfaces allow building
 		// server/client codecs.
 		serverCodec = cdc.NewServerCodec(cmds.CmdMUS, results.ResultMUS)

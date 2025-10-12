@@ -20,7 +20,7 @@ import (
 func main() {
 	const addr = "127.0.0.1:9000"
 	var (
-		invoker     = srv.NewInvoker(rcvr.Calc{})
+		invoker     = srv.NewInvoker[rcvr.Calc](rcvr.NewCalc())
 		serverCodec = cdc.NewServerCodec(cmds.CmdMUS, results.ResultMUS)
 		clientCodec = cdc.NewClientCodec(cmds.CmdMUS, results.ResultMUS)
 	)

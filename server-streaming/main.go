@@ -7,7 +7,7 @@ import (
 
 	cmdstream "github.com/cmd-stream/cmd-stream-go"
 	"github.com/cmd-stream/core-go"
-	"github.com/cmd-stream/examples-go/hello-world/receiver"
+	rcvr "github.com/cmd-stream/examples-go/hello-world/receiver"
 	"github.com/cmd-stream/examples-go/hello-world/utils"
 	"github.com/cmd-stream/examples-go/server-streaming/cmds"
 	"github.com/cmd-stream/examples-go/server-streaming/results"
@@ -26,8 +26,8 @@ func init() {
 func main() {
 	const addr = "127.0.0.1:9000"
 	var (
-		greeter     = receiver.NewGreeter("Hello", "incredible", " ")
-		invoker     = srv.NewInvoker(greeter)
+		greeter     = rcvr.NewGreeter("Hello", "incredible", " ")
+		invoker     = srv.NewInvoker[rcvr.Greeter](greeter)
 		serverCodec = cdc.NewServerCodec(cmds.CmdMUS, results.ResultMUS)
 		clientCodec = cdc.NewClientCodec(cmds.CmdMUS, results.ResultMUS)
 		wgS         = &sync.WaitGroup{}
@@ -62,7 +62,7 @@ func main() {
 	wgS.Wait()
 }
 
-func SendMultiCmd(sender sndr.Sender[receiver.Greeter]) {
+func SendMultiCmd(sender sndr.Sender[rcvr.Greeter]) {
 	var (
 		ctx, cancel = context.WithTimeout(context.Background(),
 			utils.ResultReceiveDuration)

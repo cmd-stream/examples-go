@@ -8,7 +8,7 @@ import (
 	cmdstream "github.com/cmd-stream/cmd-stream-go"
 	srv "github.com/cmd-stream/cmd-stream-go/server"
 	"github.com/cmd-stream/core-go"
-	"github.com/cmd-stream/examples-go/hello-world/receiver"
+	rcvr "github.com/cmd-stream/examples-go/hello-world/receiver"
 	utils "github.com/cmd-stream/examples-go/hello-world/utils"
 	"github.com/cmd-stream/examples-go/hello-world_protobuf/cmds"
 	"github.com/cmd-stream/examples-go/hello-world_protobuf/results"
@@ -26,8 +26,8 @@ func init() {
 func main() {
 	const addr = "127.0.0.1:9000"
 	var (
-		greeter     = receiver.NewGreeter("Hello", "incredible", " ")
-		invoker     = srv.NewInvoker(greeter)
+		greeter     = rcvr.NewGreeter("Hello", "incredible", " ")
+		invoker     = srv.NewInvoker[rcvr.Greeter](greeter)
 		serverCodec = cdc.NewServerCodec(cmds.CmdProtobuf, results.ResultProtobuf)
 		clientCodec = cdc.NewClientCodec(cmds.CmdProtobuf, results.ResultProtobuf)
 		wgS         = &sync.WaitGroup{}
@@ -56,7 +56,7 @@ func main() {
 	wgS.Wait()
 }
 
-func SendCmds(sender sndr.Sender[receiver.Greeter]) {
+func SendCmds(sender sndr.Sender[rcvr.Greeter]) {
 	wg := sync.WaitGroup{}
 
 	// Send SayHelloCmd.

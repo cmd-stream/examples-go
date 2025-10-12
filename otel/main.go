@@ -16,7 +16,7 @@ import (
 	"github.com/cmd-stream/core-go"
 	csrv "github.com/cmd-stream/core-go/server"
 	hwcmds "github.com/cmd-stream/examples-go/hello-world/cmds"
-	"github.com/cmd-stream/examples-go/hello-world/receiver"
+	rcvr "github.com/cmd-stream/examples-go/hello-world/receiver"
 	"github.com/cmd-stream/examples-go/hello-world/results"
 	"github.com/cmd-stream/examples-go/hello-world/utils"
 	"github.com/cmd-stream/examples-go/otel/cmds"
@@ -27,7 +27,6 @@ import (
 	assert "github.com/ymz-ncnk/assert/panic"
 	"github.com/ymz-ncnk/circbrk-go"
 
-	// "go.opentelemetry.io/otel/sdk/trace"
 	"go.opentelemetry.io/otel/trace"
 )
 
@@ -72,10 +71,10 @@ func main() {
 	assert.EqualError(err, nil)
 
 	var (
-		greeter = receiver.NewGreeter("Hello", "incredible", " ")
-		invoker = otelcmd.NewInvoker(srv.NewInvoker(greeter),
-			otelcmd.WithServerAddr[receiver.Greeter](tcpAddr),
-			otelcmd.WithTracerProvider[receiver.Greeter](serverTracerProvider),
+		greeter = rcvr.NewGreeter("Hello", "incredible", " ")
+		invoker = otelcmd.NewInvoker(srv.NewInvoker[rcvr.Greeter](greeter),
+			otelcmd.WithServerAddr[rcvr.Greeter](tcpAddr),
+			otelcmd.WithTracerProvider[rcvr.Greeter](serverTracerProvider),
 		)
 		serverCodec = cdc.NewServerCodec(cmds.CmdMUS, results.ResultMUS)
 		clientCodec = cdc.NewClientCodec(cmds.CmdMUS, results.ResultMUS)
@@ -97,16 +96,16 @@ func main() {
 	time.Sleep(100 * time.Millisecond)
 
 	// Make sender.
-	hooksFactory := MakeSenderHooksFactory[receiver.Greeter](tcpAddr,
+	hooksFactory := MakeSenderHooksFactory[rcvr.Greeter](tcpAddr,
 		clientTracerProvider)
 	sender, err := sndr.Make(addr, clientCodec,
 		sndr.WithGroup(
-			grp.WithReconnect[receiver.Greeter](),
+			grp.WithReconnect[rcvr.Greeter](),
 		),
 		sndr.WithSender(
 			sndr.WithHooksFactory(hooksFactory),
 		),
-		sndr.WithClientsCount[receiver.Greeter](2),
+		sndr.WithClientsCount[rcvr.Greeter](2),
 	)
 	assert.EqualError(err, nil)
 	// Send Commands.
@@ -122,7 +121,7 @@ func main() {
 }
 
 func SendCmdsWithServerRestart(addr string,
-	sender sndr.Sender[receiver.Greeter],
+	sender sndr.Sender[rcvr.Greeter],
 	server *csrv.Server,
 	wgS *sync.WaitGroup,
 ) {
@@ -154,7 +153,7 @@ func SendCmdsWithServerRestart(addr string,
 	wg.Wait()
 }
 
-func SendCmds(sender sndr.Sender[receiver.Greeter], timeToWork time.Duration) {
+func SendCmds(sender sndr.Sender[rcvr.Greeter], timeToWork time.Duration) {
 	wg := sync.WaitGroup{}
 	wg.Add(2)
 
@@ -203,7 +202,7 @@ func SendCmds(sender sndr.Sender[receiver.Greeter], timeToWork time.Duration) {
 	wg.Wait()
 }
 
-func RandCmd() (cmd core.Cmd[receiver.Greeter], wantGreeting results.Greeting) {
+func RandCmd() (cmd core.Cmd[rcvr.Greeter], wantGreeting results.Greeting) {
 	var (
 		n   = rand.Intn(5)
 		str = gofakeit.Name()

@@ -2,31 +2,36 @@ package receiver
 
 import "strings"
 
-// NewGreeter creates a new Greeter.
-func NewGreeter(interjection, adjective, sep string) Greeter {
-	return Greeter{
+// Greeter represents a Receiver and provides the functionality for
+// creating greetings.
+type Greeter interface {
+	Interjection() string
+	Adjective() string
+	Join(strs ...string) string
+}
+
+func NewGreeter(interjection, adjective, sep string) greeter {
+	return greeter{
 		interjection: interjection,
 		adjective:    adjective,
-		sep:          " ",
+		sep:          sep,
 	}
 }
 
-// Greeter represents a Receiver and provides the functionality for
-// creating greetings.
-type Greeter struct {
+type greeter struct {
 	interjection string
 	adjective    string
 	sep          string
 }
 
-func (g Greeter) Interjection() string {
+func (g greeter) Interjection() string {
 	return g.interjection
 }
 
-func (g Greeter) Adjective() string {
+func (g greeter) Adjective() string {
 	return g.adjective
 }
 
-func (g Greeter) Join(strs ...string) string {
+func (g greeter) Join(strs ...string) string {
 	return strings.Join(strs, g.sep)
 }

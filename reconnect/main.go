@@ -9,7 +9,7 @@ import (
 	grp "github.com/cmd-stream/cmd-stream-go/group"
 	srv "github.com/cmd-stream/cmd-stream-go/server"
 	"github.com/cmd-stream/examples-go/hello-world/cmds"
-	"github.com/cmd-stream/examples-go/hello-world/receiver"
+	rcvr "github.com/cmd-stream/examples-go/hello-world/receiver"
 	"github.com/cmd-stream/examples-go/hello-world/results"
 	"github.com/cmd-stream/examples-go/hello-world/utils"
 	"github.com/cmd-stream/handler-go"
@@ -26,8 +26,8 @@ func init() {
 func main() {
 	const addr = "127.0.0.1:9000"
 	var (
-		greeter     = receiver.NewGreeter("Hello", "incredible", " ")
-		invoker     = srv.NewInvoker(greeter)
+		greeter     = rcvr.NewGreeter("Hello", "incredible", " ")
+		invoker     = srv.NewInvoker[rcvr.Greeter](greeter)
 		serverCodec = cdc.NewServerCodec(cmds.CmdMUS, results.ResultMUS)
 		clientCodec = cdc.NewClientCodec(cmds.CmdMUS, results.ResultMUS)
 		wgS         = &sync.WaitGroup{}
@@ -79,17 +79,17 @@ func main() {
 	wgS.Wait()
 }
 
-func MakeReconnectSender(addr string, codec cln.Codec[receiver.Greeter]) (
-	sender sndr.Sender[receiver.Greeter], err error,
+func MakeReconnectSender(addr string, codec cln.Codec[rcvr.Greeter]) (
+	sender sndr.Sender[rcvr.Greeter], err error,
 ) {
 	return sndr.Make(addr, codec,
 		sndr.WithGroup(
-			grp.WithReconnect[receiver.Greeter](),
+			grp.WithReconnect[rcvr.Greeter](),
 		),
 	)
 }
 
-func SendCmd(sender sndr.Sender[receiver.Greeter]) {
+func SendCmd(sender sndr.Sender[rcvr.Greeter]) {
 	var (
 		cmd  = cmds.NewSayHelloCmd("world")
 		want = results.Greeting("Hello world")

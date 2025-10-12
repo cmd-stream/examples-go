@@ -8,7 +8,7 @@ import (
 	cmdstream "github.com/cmd-stream/cmd-stream-go"
 	srv "github.com/cmd-stream/cmd-stream-go/server"
 	"github.com/cmd-stream/examples-go/hello-world/cmds"
-	"github.com/cmd-stream/examples-go/hello-world/receiver"
+	rcvr "github.com/cmd-stream/examples-go/hello-world/receiver"
 	"github.com/cmd-stream/examples-go/hello-world/results"
 	utils "github.com/cmd-stream/examples-go/hello-world/utils"
 	"github.com/cmd-stream/handler-go"
@@ -31,8 +31,8 @@ func main() {
 	assert.EqualError(err, nil)
 
 	var (
-		greeter       = receiver.NewGreeter("Hello", "incredible", " ")
-		invoker       = srv.NewInvoker(greeter)
+		greeter       = rcvr.NewGreeter("Hello", "incredible", " ")
+		invoker       = srv.NewInvoker[rcvr.Greeter](greeter)
 		serverCodec   = cdc.NewServerCodec(cmds.CmdMUS, results.ResultMUS)
 		clientCodec   = cdc.NewClientCodec(cmds.CmdMUS, results.ResultMUS)
 		serverTLSConf = tls.Config{Certificates: []tls.Certificate{serverCert}}
@@ -62,7 +62,7 @@ func main() {
 
 	// Make sender.
 	sender, err := sndr.Make(addr, clientCodec,
-		sndr.WithTLSConfig[receiver.Greeter](&clientTLSConf),
+		sndr.WithTLSConfig[rcvr.Greeter](&clientTLSConf),
 	)
 	assert.EqualError(err, nil)
 	// Send Command.
@@ -77,7 +77,7 @@ func main() {
 	wgS.Wait()
 }
 
-func SendCmd(sender sndr.Sender[receiver.Greeter]) {
+func SendCmd(sender sndr.Sender[rcvr.Greeter]) {
 	var (
 		cmd  = cmds.NewSayHelloCmd("world")
 		want = results.Greeting("Hello world")
