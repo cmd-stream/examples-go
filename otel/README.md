@@ -54,3 +54,11 @@ go run .
 
 - Grafana UI: <http://localhost:3000> (admin/admin)
 - Prometheus UI: <http://localhost:9090>
+
+### Shutdown
+
+From the `otel/monitoring` folder
+
+```bash
+docker compose down # or sudo docker-compose down
+```
