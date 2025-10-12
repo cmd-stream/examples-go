@@ -22,8 +22,8 @@ func init() {
 }
 
 // main function generates the mus-format.gen.go file, containing MUS
-// serialization code for hw.SayHelloCmd, hw.SayFancyHelloCmd, hw.Greeting,
-// core.Cmd and core.Result interfaces.
+// serialization code for cmds.SayHelloCmd, cmds.SayFancyHelloCmd and the
+// core.Cmd interface.
 func main() {
 	// Create a generator.
 	g, err := musgen.NewCodeGenerator(
@@ -39,7 +39,7 @@ func main() {
 	// connection will be closed.
 	ops := structops.WithField(typeops.WithLenValidator("ValidateLength"))
 
-	// hw.SayHelloCmd
+	// cmds.SayHelloCmd.
 	sayHelloCmdType := reflect.TypeFor[cmds.SayHelloCmd]()
 	err = g.AddStruct(sayHelloCmdType, ops)
 	assert.EqualError(err, nil)
@@ -50,7 +50,7 @@ func main() {
 	err = g.AddDTS(sayHelloCmdType)
 	assert.EqualError(err, nil)
 
-	// hw.SayFancyHelloCmd
+	// cmds.SayFancyHelloCmd.
 	sayFancyHelloCmdType := reflect.TypeFor[cmds.SayFancyHelloCmd]()
 	err = g.AddStruct(sayFancyHelloCmdType, ops)
 	assert.EqualError(err, nil)
@@ -64,11 +64,11 @@ func main() {
 		introps.WithImpl(sayHelloCmdType),
 		introps.WithImpl(sayFancyHelloCmdType),
 		introps.WithMarshaller(), /// SayHelloCmd and SayFancyHelloCmd should
-		// also implement the MarshallerTypedMUS interface. More on this later.
+		// also implement the MarshallerTypedMUS interface.
 	)
 	assert.EqualError(err, nil)
 
-	// Generate
+	// Generate.
 	bs, err := g.Generate()
 	assert.EqualError(err, nil)
 	err = os.WriteFile("./mus-format.gen.go", bs, 0644)

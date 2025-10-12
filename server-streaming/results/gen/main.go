@@ -36,7 +36,7 @@ func main() {
 		panic(err)
 	}
 
-	// Add core.Result
+	// Add core.Result.
 	err = g.AddInterface(reflect.TypeFor[core.Result](),
 		introps.WithImpl(greetingType),
 		introps.WithMarshaller(),

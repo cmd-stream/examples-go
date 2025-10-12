@@ -19,8 +19,7 @@ func init() {
 }
 
 // main function generates the mus-format.gen.go file, containing MUS
-// serialization code for hw.SayHelloCmd, hw.SayFancyHelloCmd, hw.Greeting,
-// core.Cmd and core.Result interfaces.
+// serialization code for results.Greeting and the core.Result interface.
 func main() {
 	// Create a generator.
 	g, err := musgen.NewCodeGenerator(
@@ -29,7 +28,7 @@ func main() {
 	)
 	assert.EqualError(err, nil)
 
-	// Greeting
+	// results.Greeting.
 	greetingType := reflect.TypeFor[results.Greeting]()
 	err = g.AddDefinedType(greetingType)
 	assert.EqualError(err, nil)
@@ -37,14 +36,14 @@ func main() {
 	err = g.AddDTS(greetingType)
 	assert.EqualError(err, nil)
 
-	// core.Result interface
+	// core.Result interface.
 	err = g.AddInterface(reflect.TypeFor[core.Result](),
 		introps.WithImpl(greetingType),
 		introps.WithMarshaller(),
 	)
 	assert.EqualError(err, nil)
 
-	// Generate
+	// Generate.
 	bs, err := g.Generate()
 	assert.EqualError(err, nil)
 	err = os.WriteFile("./mus-format.gen.go", bs, 0644)

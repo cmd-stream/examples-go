@@ -38,7 +38,7 @@ func main() {
 		panic(err)
 	}
 
-	// Add core.Cmd
+	// Add core.Cmd.
 	err = g.AddInterface(reflect.TypeFor[core.Cmd[receiver.Greeter]](),
 		introps.WithImpl(sayFancyHelloMultiCmdType))
 	if err != nil {
