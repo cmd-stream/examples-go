@@ -5,8 +5,8 @@ import (
 	"time"
 
 	"github.com/cmd-stream/core-go"
-	rcvr "github.com/cmd-stream/examples-go/calc/receiver"
-	"github.com/cmd-stream/examples-go/calc/results"
+	rcvr "github.com/cmd-stream/examples-go/calc_json/receiver"
+	"github.com/cmd-stream/examples-go/calc_json/results"
 )
 
 // SubCmd defines the client request for a substraction operation. As a

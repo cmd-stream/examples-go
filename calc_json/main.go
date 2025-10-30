@@ -3,14 +3,15 @@ package main
 import (
 	"context"
 	"fmt"
+	"reflect"
 	"time"
 
 	cmdstream "github.com/cmd-stream/cmd-stream-go"
-	"github.com/cmd-stream/examples-go/calc/cmds"
-	rcvr "github.com/cmd-stream/examples-go/calc/receiver"
-	"github.com/cmd-stream/examples-go/calc/results"
+	"github.com/cmd-stream/examples-go/calc_json/cmds"
+	rcvr "github.com/cmd-stream/examples-go/calc_json/receiver"
+	"github.com/cmd-stream/examples-go/calc_json/results"
 
-	cdc "github.com/cmd-stream/codec-mus-stream-go"
+	codec "github.com/cmd-stream/codec-json-go"
 
 	srv "github.com/cmd-stream/cmd-stream-go/server"
 
@@ -20,9 +21,16 @@ import (
 func main() {
 	const addr = "127.0.0.1:9000"
 	var (
-		invoker     = srv.NewInvoker[rcvr.Calc](rcvr.NewCalc())
-		serverCodec = cdc.NewServerCodec(cmds.CmdMUS, results.ResultMUS)
-		clientCodec = cdc.NewClientCodec(cmds.CmdMUS, results.ResultMUS)
+		invoker  = srv.NewInvoker[rcvr.Calc](rcvr.NewCalc())
+		cmdTypes = []reflect.Type{
+			reflect.TypeFor[cmds.AddCmd](),
+			reflect.TypeFor[cmds.SubCmd](),
+		}
+		resultTypes = []reflect.Type{
+			reflect.TypeFor[results.CalcResult](),
+		}
+		serverCodec = codec.NewServerCodec[rcvr.Calc](cmdTypes, resultTypes)
+		clientCodec = codec.NewClientCodec[rcvr.Calc](cmdTypes, resultTypes)
 	)
 
 	// Start server.

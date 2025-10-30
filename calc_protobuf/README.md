@@ -1,6 +1,7 @@
-# calc
+# calc_protobuf
 
-calc - getting started example. It includes definitions for:
+**calc_protobuf** - getting started example. It uses Protobuf codec and
+includes the following definitions:
 
 - [AddCmd](cmds/add_cmd.go) and [SubCmd](cmds/sub_cmd.go) Commands.
 - [CalcResult](results/calc_result.go) Result.

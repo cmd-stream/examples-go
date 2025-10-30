@@ -1,0 +1,12 @@
+
+syntax = "proto3";
+package protobuf;
+
+option go_package = "github.com/cmd-stream/examples-go/calc_protobuf/results";
+
+// protoc --go_out=. --go_opt=paths=source_relative ./results/results.proto
+
+message CalcResult {
+  int64 R = 1;
+}
+

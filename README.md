@@ -6,8 +6,9 @@ package is one example):
 ## Basic Examples
 
 - [echo](echo): Minimal.
-- [calc](calc): Getting started.
-- [hello-world](hello-world): Basic usage.
+- [calc_json](calc_json): Getting started with JSON.
+- [calc_protobuf](calc_protobuf): Getting started with Protobuf.
+- [hello-world](hello-world): Basic usage with MUS.
 
 ## Advanced Features
 
