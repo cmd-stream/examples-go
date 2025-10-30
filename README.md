@@ -19,6 +19,5 @@ package is one example):
 
 ## Specialized Examples
 
-- [hello-world_protobuf](hello-world_protobuf): Usage with Protobuf.
 - [otel](otel): OpenTelemetry and circuit breaker demo.
 - [rpc](rpc): Implementing RPC with `cmd-stream-go`.
