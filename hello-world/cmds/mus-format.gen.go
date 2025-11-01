@@ -28,16 +28,16 @@ var SayHelloCmdMUS = sayHelloCmdMUS{}
 type sayHelloCmdMUS struct{}
 
 func (s sayHelloCmdMUS) Marshal(v SayHelloCmd, w mus.Writer) (n int, err error) {
-	return string6ΣpNH2vVpMrslPPDKNWvGwΞΞ.Marshal(v.str, w)
+	return string6ΣpNH2vVpMrslPPDKNWvGwΞΞ.Marshal(v.Str, w)
 }
 
 func (s sayHelloCmdMUS) Unmarshal(r mus.Reader) (v SayHelloCmd, n int, err error) {
-	v.str, n, err = string6ΣpNH2vVpMrslPPDKNWvGwΞΞ.Unmarshal(r)
+	v.Str, n, err = string6ΣpNH2vVpMrslPPDKNWvGwΞΞ.Unmarshal(r)
 	return
 }
 
 func (s sayHelloCmdMUS) Size(v SayHelloCmd) (size int) {
-	return string6ΣpNH2vVpMrslPPDKNWvGwΞΞ.Size(v.str)
+	return string6ΣpNH2vVpMrslPPDKNWvGwΞΞ.Size(v.Str)
 }
 
 func (s sayHelloCmdMUS) Skip(r mus.Reader) (n int, err error) {
@@ -52,16 +52,16 @@ var SayFancyHelloCmdMUS = sayFancyHelloCmdMUS{}
 type sayFancyHelloCmdMUS struct{}
 
 func (s sayFancyHelloCmdMUS) Marshal(v SayFancyHelloCmd, w mus.Writer) (n int, err error) {
-	return string6ΣpNH2vVpMrslPPDKNWvGwΞΞ.Marshal(v.str, w)
+	return string6ΣpNH2vVpMrslPPDKNWvGwΞΞ.Marshal(v.Str, w)
 }
 
 func (s sayFancyHelloCmdMUS) Unmarshal(r mus.Reader) (v SayFancyHelloCmd, n int, err error) {
-	v.str, n, err = string6ΣpNH2vVpMrslPPDKNWvGwΞΞ.Unmarshal(r)
+	v.Str, n, err = string6ΣpNH2vVpMrslPPDKNWvGwΞΞ.Unmarshal(r)
 	return
 }
 
 func (s sayFancyHelloCmdMUS) Size(v SayFancyHelloCmd) (size int) {
-	return string6ΣpNH2vVpMrslPPDKNWvGwΞΞ.Size(v.str)
+	return string6ΣpNH2vVpMrslPPDKNWvGwΞΞ.Size(v.Str)
 }
 
 func (s sayFancyHelloCmdMUS) Skip(r mus.Reader) (n int, err error) {

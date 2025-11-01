@@ -15,7 +15,7 @@ type GreeterService struct {
 }
 
 func (s GreeterService) SayHello(ctx context.Context, str string) (string, error) {
-	cmd := cmds.NewSayHelloCmd(str)
+	cmd := cmds.SayHelloCmd{Str: str}
 	greeting, err := s.sender.Send(ctx, cmd)
 	if err != nil {
 		return "", err

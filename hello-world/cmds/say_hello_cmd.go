@@ -9,15 +9,10 @@ import (
 	"github.com/cmd-stream/examples-go/hello-world/results"
 )
 
-// NewSayHelloCmd creates a new SayHelloCmd.
-func NewSayHelloCmd(str string) SayHelloCmd {
-	return SayHelloCmd{str}
-}
-
 // SayHelloCmd implements core.Cmd and exts.MarshallerTypedMUS interfaces.
 // Produces greetings like "Hello world".
 type SayHelloCmd struct {
-	str string
+	Str string `json:"str"`
 }
 
 func (c SayHelloCmd) Exec(ctx context.Context, seq core.Seq, at time.Time,
@@ -25,7 +20,7 @@ func (c SayHelloCmd) Exec(ctx context.Context, seq core.Seq, at time.Time,
 ) (err error) {
 	var (
 		greeting = results.Greeting(
-			greeter.Join(greeter.Interjection(), c.str),
+			greeter.Join(greeter.Interjection(), c.Str),
 		)
 		// Limiting the execution time of a Command on the server is
 		// considered a good practice that can be achieved with a deadline.

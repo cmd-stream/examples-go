@@ -205,13 +205,13 @@ func RandCmd() (cmd core.Cmd[rcvr.Greeter], wantGreeting results.Greeting) {
 	)
 	switch n {
 	case 0, 1, 2:
-		cmd = otelcmd.NewTraceCmd(hwcmds.NewSayHelloCmd(str))
+		cmd = otelcmd.NewTraceCmd(hwcmds.SayHelloCmd{Str: str})
 		wantGreeting = results.Greeting("Hello " + str)
 	case 3:
-		cmd = hwcmds.NewSayHelloCmd(str)
+		cmd = hwcmds.SayHelloCmd{Str: str}
 		wantGreeting = results.Greeting("Hello " + str)
 	case 4, 5:
-		cmd = otelcmd.NewTraceCmd(hwcmds.NewSayFancyHelloCmd(str))
+		cmd = otelcmd.NewTraceCmd(hwcmds.SayFancyHelloCmd{Str: str})
 		wantGreeting = results.Greeting("Hello incredible " + str)
 	}
 	return

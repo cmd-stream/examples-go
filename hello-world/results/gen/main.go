@@ -11,13 +11,7 @@ import (
 	musgen "github.com/mus-format/musgen-go/mus"
 	genops "github.com/mus-format/musgen-go/options/generate"
 	introps "github.com/mus-format/musgen-go/options/interface"
-
-	assert "github.com/ymz-ncnk/assert/panic"
 )
-
-func init() {
-	assert.On = true
-}
 
 // main function generates the mus-format.gen.go file, containing MUS
 // serialization code for results.Greeting and the core.Result interface.

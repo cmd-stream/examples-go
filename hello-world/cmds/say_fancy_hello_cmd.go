@@ -9,15 +9,10 @@ import (
 	"github.com/cmd-stream/examples-go/hello-world/results"
 )
 
-// NewSayFancyHelloCmd creates a new SayFancyHelloCmd.
-func NewSayFancyHelloCmd(str string) SayFancyHelloCmd {
-	return SayFancyHelloCmd{str}
-}
-
 // SayFancyHelloCmd implements core.Cmd and exts.MarshallerTypedMUS interfaces.
 // Produces greetings like "Hello incredible world".
 type SayFancyHelloCmd struct {
-	str string
+	Str string `json:"str"`
 }
 
 func (c SayFancyHelloCmd) Exec(ctx context.Context, seq core.Seq, at time.Time,
@@ -27,7 +22,7 @@ func (c SayFancyHelloCmd) Exec(ctx context.Context, seq core.Seq, at time.Time,
 	// Receiver.
 	var (
 		greeting = results.Greeting(
-			greeter.Join(greeter.Interjection(), greeter.Adjective(), c.str),
+			greeter.Join(greeter.Interjection(), greeter.Adjective(), c.Str),
 		)
 		deadline = at.Add(CmdExecDuration)
 	)

@@ -7,7 +7,7 @@ import (
 	"time"
 
 	cmdstream "github.com/cmd-stream/cmd-stream-go"
-	cdc "github.com/cmd-stream/codec-mus-stream-go"
+	codecmus "github.com/cmd-stream/codec-mus-stream-go"
 	"github.com/cmd-stream/core-go"
 	"github.com/cmd-stream/handler-go"
 
@@ -37,9 +37,19 @@ func main() {
 		invoker = srv.NewInvoker[rcvr.Greeter](greeter)
 		// Serializers of core.Cmd and core.Result interfaces allow building
 		// server/client codecs.
-		serverCodec = cdc.NewServerCodec(cmds.CmdMUS, results.ResultMUS)
-		clientCodec = cdc.NewClientCodec(cmds.CmdMUS, results.ResultMUS)
-		wgS         = &sync.WaitGroup{}
+		serverCodec = codecmus.NewServerCodec(cmds.CmdMUS, results.ResultMUS)
+		clientCodec = codecmus.NewClientCodec(cmds.CmdMUS, results.ResultMUS)
+		// // Alternative JSON codecs, require github.com/cmd-stream/codec-json-go:
+		// cmdTypes = []reflect.Type{
+		//   reflect.TypeFor[cmds.SayHelloCmd](),
+		//   reflect.TypeFor[cmds.SayFancyHelloCmd](),
+		// }
+		// resultTypes = []reflect.Type{
+		//   reflect.TypeFor[results.Greeting](),
+		// }
+		// serverCodec = codecjson.NewServerCodec[rcvr.Greeter](cmdTypes, resultTypes)
+		// clientCodec = codecjson.NewClientCodec[rcvr.Greeter](cmdTypes, resultTypes)
+		wgS = &sync.WaitGroup{}
 	)
 
 	server := MakeServer(serverCodec, invoker)
@@ -68,7 +78,7 @@ func main() {
 	wgS.Wait()
 }
 
-func MakeServer(codec cdc.ServerCodec[rcvr.Greeter],
+func MakeServer(codec srv.Codec[rcvr.Greeter],
 	invoker handler.Invoker[rcvr.Greeter],
 ) *csrv.Server {
 	return cmdstream.MakeServer(codec, invoker,
@@ -105,7 +115,7 @@ func MakeServer(codec cdc.ServerCodec[rcvr.Greeter],
 	)
 }
 
-func MakeSender(addr string, codec cdc.ClientCodec[rcvr.Greeter]) (
+func MakeSender(addr string, codec cln.Codec[rcvr.Greeter]) (
 	sender sndr.Sender[rcvr.Greeter], err error,
 ) {
 	return sndr.Make(addr, codec,
@@ -186,7 +196,7 @@ func SendCmds(sender sndr.Sender[rcvr.Greeter]) {
 	wg.Add(1)
 	go func() {
 		var (
-			cmd  = cmds.NewSayHelloCmd("world")
+			cmd  = cmds.SayHelloCmd{Str: "world"}
 			want = results.Greeting("Hello world")
 		)
 		greeting, err := utils.SendCmd(cmd, sender)
@@ -199,7 +209,7 @@ func SendCmds(sender sndr.Sender[rcvr.Greeter]) {
 	wg.Add(1)
 	go func() {
 		var (
-			cmd  = cmds.NewSayFancyHelloCmd("world")
+			cmd  = cmds.SayFancyHelloCmd{Str: "world"}
 			want = results.Greeting("Hello incredible world")
 		)
 		greeting, err := utils.SendCmd(cmd, sender)

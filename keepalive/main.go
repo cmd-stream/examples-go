@@ -91,7 +91,7 @@ func SendCmds(sender sndr.Sender[rcvr.Greeter]) {
 	wg.Add(1)
 	go func() {
 		var (
-			cmd  = cmds.NewSayHelloCmd("world")
+			cmd  = cmds.SayHelloCmd{Str: "world"}
 			want = results.Greeting("Hello world")
 		)
 		greeting, err := utils.SendCmd(cmd, sender)
@@ -108,7 +108,7 @@ func SendCmds(sender sndr.Sender[rcvr.Greeter]) {
 	wg.Add(1)
 	go func() {
 		var (
-			cmd  = cmds.NewSayFancyHelloCmd("world")
+			cmd  = cmds.SayFancyHelloCmd{Str: "world"}
 			want = results.Greeting("Hello incredible world")
 		)
 		greeting, err := utils.SendCmd(cmd, sender)

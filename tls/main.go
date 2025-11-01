@@ -79,7 +79,7 @@ func main() {
 
 func SendCmd(sender sndr.Sender[rcvr.Greeter]) {
 	var (
-		cmd  = cmds.NewSayHelloCmd("world")
+		cmd  = cmds.SayHelloCmd{Str: "world"}
 		want = results.Greeting("Hello world")
 	)
 	greeting, err := utils.SendCmd(cmd, sender)
