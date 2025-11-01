@@ -14,10 +14,8 @@ require (
 	github.com/cmd-stream/transport-go v0.0.0-20251027205650-194496708c59
 	github.com/mus-format/common-go v0.0.0-20251026152644-9f5ac6728d8a
 	github.com/mus-format/dts-stream-go v0.9.1
-	github.com/mus-format/ext-mus-stream-go v0.0.0-20250424190117-02f7e9442021
-	github.com/mus-format/ext-protobuf-stream-go v0.0.0-20250423190029-59211887ef2c
 	github.com/mus-format/mus-stream-go v0.7.2
-	github.com/mus-format/musgen-go v0.2.3-0.20251027211031-0ea445859088
+	github.com/mus-format/musgen-go v0.2.3
 	github.com/ymz-ncnk/assert v0.0.0-20250528151733-c41b2fca7933
 	github.com/ymz-ncnk/circbrk-go v0.0.0-20250912145433-3ecf61f801af
 	go.opentelemetry.io/otel v1.36.0

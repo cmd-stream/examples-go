@@ -8,7 +8,7 @@ import (
 	"github.com/cmd-stream/examples-go/hello-world/receiver"
 	"github.com/cmd-stream/examples-go/hello-world/utils"
 	"github.com/cmd-stream/examples-go/server-streaming/results"
-	muss "github.com/mus-format/mus-stream-go"
+	"github.com/mus-format/mus-stream-go"
 )
 
 // NewSayFancyHelloMultiCmd creates a new SayFancyHelloMultiCmd.
@@ -16,8 +16,12 @@ func NewSayFancyHelloMultiCmd(str string) SayFancyHelloMultiCmd {
 	return SayFancyHelloMultiCmd{str}
 }
 
-// SayFancyHelloMultiCmd implements core.Cmd and exts.MarshallerTypedMUS
+// SayFancyHelloMultiCmd implements core.Cmd and ext.MarshallerTypedMUS
 // interfaces.
+//
+// We have to define MarshalTypedMUS and SizeTypedMUS methods (implement the
+// MarshallerTypedMUS interface) because the core.Cmd interface
+// serialization code was generated with introps.WithRegisterMarshaller().
 type SayFancyHelloMultiCmd struct {
 	str string
 }
@@ -45,7 +49,7 @@ func (c SayFancyHelloMultiCmd) Exec(ctx context.Context, seq core.Seq,
 	return
 }
 
-func (c SayFancyHelloMultiCmd) MarshalTypedMUS(w muss.Writer) (n int, err error) {
+func (c SayFancyHelloMultiCmd) MarshalTypedMUS(w mus.Writer) (n int, err error) {
 	return SayFancyHelloMultiCmdDTS.Marshal(c, w)
 }
 

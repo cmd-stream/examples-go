@@ -6,7 +6,7 @@ import (
 	"reflect"
 
 	"github.com/cmd-stream/core-go"
-	"github.com/cmd-stream/examples-go/hello-world/receiver"
+	rcvr "github.com/cmd-stream/examples-go/hello-world/receiver"
 	"github.com/cmd-stream/examples-go/server-streaming/cmds"
 
 	musgen "github.com/mus-format/musgen-go/mus"
@@ -16,6 +16,8 @@ import (
 
 // Main generates the mus-format.gen.go file with MUS serialization code for
 // SayFancyHelloMultiCmd and the core.Cmd interface.
+//
+// For more details, see https://github.com/mus-format/musgen-go.
 func main() {
 	// Create a generator.
 	g, err := musgen.NewCodeGenerator(
@@ -26,21 +28,15 @@ func main() {
 		panic(err)
 	}
 
-	// Add SayFancyHelloMultiCmd.
-	sayFancyHelloMultiCmdType := reflect.TypeFor[cmds.SayFancyHelloMultiCmd]()
-	err = g.AddStruct(sayFancyHelloMultiCmdType)
-	if err != nil {
-		panic(err)
-	}
-
-	err = g.AddDTS(sayFancyHelloMultiCmdType)
-	if err != nil {
-		panic(err)
-	}
-
-	// Add core.Cmd.
-	err = g.AddInterface(reflect.TypeFor[core.Cmd[receiver.Greeter]](),
-		introps.WithImpl(sayFancyHelloMultiCmdType))
+	// Register core.Cmd interface.
+	err = g.RegisterInterface(reflect.TypeFor[core.Cmd[rcvr.Greeter]](),
+		// Specify implementations.
+		introps.WithStructImpl(reflect.TypeFor[cmds.SayFancyHelloMultiCmd]()),
+		introps.WithRegisterMarshaller(), // With this option all Commands must
+		// implement the MarshallerTypedMUS interface from
+		// github.com/mus-format/ext-stream-go.
+		// It's not required and only affects how the Commands are serialized.
+	)
 	if err != nil {
 		panic(err)
 	}

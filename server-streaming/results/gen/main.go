@@ -15,6 +15,8 @@ import (
 
 // Main generates the mus-format.gen.go file with MUS serialization code for
 // Greeting and the core.Result interface.
+//
+// For more details, see https://github.com/mus-format/musgen-go.
 func main() {
 	// Create a generator.
 	g, err := musgen.NewCodeGenerator(
@@ -24,22 +26,14 @@ func main() {
 		panic(err)
 	}
 
-	// Add Greeting.
-	greetingType := reflect.TypeFor[results.Greeting]()
-	err = g.AddStruct(greetingType)
-	if err != nil {
-		panic(err)
-	}
-
-	err = g.AddDTS(greetingType)
-	if err != nil {
-		panic(err)
-	}
-
-	// Add core.Result.
-	err = g.AddInterface(reflect.TypeFor[core.Result](),
-		introps.WithImpl(greetingType),
-		introps.WithMarshaller(),
+	// Register core.Result interface.
+	err = g.RegisterInterface(reflect.TypeFor[core.Result](),
+		// Specify implementations.
+		introps.WithStructImpl(reflect.TypeFor[results.Greeting]()),
+		introps.WithRegisterMarshaller(), // With this option all Results must
+		// implement the MarshallerTypedMUS interface from
+		// github.com/mus-format/ext-stream-go.
+		// It's not required and only affects how the Results are serialized.
 	)
 	if err != nil {
 		panic(err)

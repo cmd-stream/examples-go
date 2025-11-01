@@ -4,16 +4,19 @@ package cmds
 
 import (
 	"fmt"
-	"reflect"
 
 	"github.com/cmd-stream/core-go"
 	"github.com/cmd-stream/examples-go/hello-world/receiver"
 	com "github.com/mus-format/common-go"
 	dts "github.com/mus-format/dts-stream-go"
-	exts "github.com/mus-format/ext-mus-stream-go"
-	muss "github.com/mus-format/mus-stream-go"
+	mus "github.com/mus-format/mus-stream-go"
 	strops "github.com/mus-format/mus-stream-go/options/string"
 	"github.com/mus-format/mus-stream-go/ord"
+)
+
+const (
+	SayHelloCmdDTM com.DTM = iota + 1
+	SayFancyHelloCmdDTM
 )
 
 var (
@@ -24,11 +27,11 @@ var SayHelloCmdMUS = sayHelloCmdMUS{}
 
 type sayHelloCmdMUS struct{}
 
-func (s sayHelloCmdMUS) Marshal(v SayHelloCmd, w muss.Writer) (n int, err error) {
+func (s sayHelloCmdMUS) Marshal(v SayHelloCmd, w mus.Writer) (n int, err error) {
 	return string6ΣpNH2vVpMrslPPDKNWvGwΞΞ.Marshal(v.str, w)
 }
 
-func (s sayHelloCmdMUS) Unmarshal(r muss.Reader) (v SayHelloCmd, n int, err error) {
+func (s sayHelloCmdMUS) Unmarshal(r mus.Reader) (v SayHelloCmd, n int, err error) {
 	v.str, n, err = string6ΣpNH2vVpMrslPPDKNWvGwΞΞ.Unmarshal(r)
 	return
 }
@@ -37,7 +40,7 @@ func (s sayHelloCmdMUS) Size(v SayHelloCmd) (size int) {
 	return string6ΣpNH2vVpMrslPPDKNWvGwΞΞ.Size(v.str)
 }
 
-func (s sayHelloCmdMUS) Skip(r muss.Reader) (n int, err error) {
+func (s sayHelloCmdMUS) Skip(r mus.Reader) (n int, err error) {
 	n, err = string6ΣpNH2vVpMrslPPDKNWvGwΞΞ.Skip(r)
 	return
 }
@@ -48,11 +51,11 @@ var SayFancyHelloCmdMUS = sayFancyHelloCmdMUS{}
 
 type sayFancyHelloCmdMUS struct{}
 
-func (s sayFancyHelloCmdMUS) Marshal(v SayFancyHelloCmd, w muss.Writer) (n int, err error) {
+func (s sayFancyHelloCmdMUS) Marshal(v SayFancyHelloCmd, w mus.Writer) (n int, err error) {
 	return string6ΣpNH2vVpMrslPPDKNWvGwΞΞ.Marshal(v.str, w)
 }
 
-func (s sayFancyHelloCmdMUS) Unmarshal(r muss.Reader) (v SayFancyHelloCmd, n int, err error) {
+func (s sayFancyHelloCmdMUS) Unmarshal(r mus.Reader) (v SayFancyHelloCmd, n int, err error) {
 	v.str, n, err = string6ΣpNH2vVpMrslPPDKNWvGwΞΞ.Unmarshal(r)
 	return
 }
@@ -61,7 +64,7 @@ func (s sayFancyHelloCmdMUS) Size(v SayFancyHelloCmd) (size int) {
 	return string6ΣpNH2vVpMrslPPDKNWvGwΞΞ.Size(v.str)
 }
 
-func (s sayFancyHelloCmdMUS) Skip(r muss.Reader) (n int, err error) {
+func (s sayFancyHelloCmdMUS) Skip(r mus.Reader) (n int, err error) {
 	n, err = string6ΣpNH2vVpMrslPPDKNWvGwΞΞ.Skip(r)
 	return
 }
@@ -72,14 +75,18 @@ var CmdMUS = cmdMUS{}
 
 type cmdMUS struct{}
 
-func (s cmdMUS) Marshal(v core.Cmd[receiver.Greeter], w muss.Writer) (n int, err error) {
-	if m, ok := v.(exts.MarshallerTypedMUS); ok {
-		return m.MarshalTypedMUS(w)
+func (s cmdMUS) Marshal(v core.Cmd[receiver.Greeter], w mus.Writer) (n int, err error) {
+	switch t := v.(type) {
+	case SayHelloCmd:
+		return SayHelloCmdDTS.Marshal(t, w)
+	case SayFancyHelloCmd:
+		return SayFancyHelloCmdDTS.Marshal(t, w)
+	default:
+		panic(fmt.Sprintf(com.ErrorPrefix+"unexpected %v type", t))
 	}
-	panic(fmt.Sprintf("%v doesn't implement the exts.MarshallerTypedMUS interface", reflect.TypeOf(v)))
 }
 
-func (s cmdMUS) Unmarshal(r muss.Reader) (v core.Cmd[receiver.Greeter], n int, err error) {
+func (s cmdMUS) Unmarshal(r mus.Reader) (v core.Cmd[receiver.Greeter], n int, err error) {
 	dtm, n, err := dts.DTMSer.Unmarshal(r)
 	if err != nil {
 		return
@@ -91,7 +98,7 @@ func (s cmdMUS) Unmarshal(r muss.Reader) (v core.Cmd[receiver.Greeter], n int, e
 	case SayFancyHelloCmdDTM:
 		v, n1, err = SayFancyHelloCmdDTS.UnmarshalData(r)
 	default:
-		err = fmt.Errorf("unexpected %v DTM", dtm)
+		err = fmt.Errorf(com.ErrorPrefix+"unexpected %v DTM", dtm)
 		return
 	}
 	n += n1
@@ -99,13 +106,17 @@ func (s cmdMUS) Unmarshal(r muss.Reader) (v core.Cmd[receiver.Greeter], n int, e
 }
 
 func (s cmdMUS) Size(v core.Cmd[receiver.Greeter]) (size int) {
-	if m, ok := v.(exts.MarshallerTypedMUS); ok {
-		return m.SizeTypedMUS()
+	switch t := v.(type) {
+	case SayHelloCmd:
+		return SayHelloCmdDTS.Size(t)
+	case SayFancyHelloCmd:
+		return SayFancyHelloCmdDTS.Size(t)
+	default:
+		panic(fmt.Sprintf(com.ErrorPrefix+"unexpected %v type", t))
 	}
-	panic(fmt.Sprintf("%v doesn't implement the exts.MarshallerTypedMUS interface", reflect.TypeOf(v)))
 }
 
-func (s cmdMUS) Skip(r muss.Reader) (n int, err error) {
+func (s cmdMUS) Skip(r mus.Reader) (n int, err error) {
 	dtm, n, err := dts.DTMSer.Unmarshal(r)
 	if err != nil {
 		return
@@ -117,7 +128,7 @@ func (s cmdMUS) Skip(r muss.Reader) (n int, err error) {
 	case SayFancyHelloCmdDTM:
 		n1, err = SayFancyHelloCmdDTS.SkipData(r)
 	default:
-		err = fmt.Errorf("unexpected %v DTM", dtm)
+		err = fmt.Errorf(com.ErrorPrefix+"unexpected %v DTM", dtm)
 		return
 	}
 	n += n1

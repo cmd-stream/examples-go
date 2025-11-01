@@ -7,7 +7,6 @@ import (
 	"github.com/cmd-stream/core-go"
 	"github.com/cmd-stream/examples-go/hello-world/receiver"
 	"github.com/cmd-stream/examples-go/hello-world/results"
-	muss "github.com/mus-format/mus-stream-go"
 )
 
 // NewSayFancyHelloCmd creates a new SayFancyHelloCmd.
@@ -34,12 +33,4 @@ func (c SayFancyHelloCmd) Exec(ctx context.Context, seq core.Seq, at time.Time,
 	)
 	_, err = proxy.SendWithDeadline(seq, greeting, deadline)
 	return
-}
-
-func (c SayFancyHelloCmd) MarshalTypedMUS(w muss.Writer) (n int, err error) {
-	return SayFancyHelloCmdDTS.Marshal(c, w)
-}
-
-func (c SayFancyHelloCmd) SizeTypedMUS() (size int) {
-	return SayFancyHelloCmdDTS.Size(c)
 }

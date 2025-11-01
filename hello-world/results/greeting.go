@@ -1,6 +1,6 @@
 package results
 
-import muss "github.com/mus-format/mus-stream-go"
+import "github.com/mus-format/mus-stream-go"
 
 // Greeting implements core.Result and exts.MarshallerTypedMUS interfaces.
 type Greeting string
@@ -13,7 +13,7 @@ func (g Greeting) String() string {
 	return string(g)
 }
 
-func (g Greeting) MarshalTypedMUS(w muss.Writer) (n int, err error) {
+func (g Greeting) MarshalTypedMUS(w mus.Writer) (n int, err error) {
 	return GreetingDTS.Marshal(g, w)
 }
 

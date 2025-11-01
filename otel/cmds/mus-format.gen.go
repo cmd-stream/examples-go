@@ -9,8 +9,9 @@ import (
 	hwcmds "github.com/cmd-stream/examples-go/hello-world/cmds"
 	"github.com/cmd-stream/examples-go/hello-world/receiver"
 	otelcmd "github.com/cmd-stream/otelcmd-stream-go"
+	com "github.com/mus-format/common-go"
 	dts "github.com/mus-format/dts-stream-go"
-	muss "github.com/mus-format/mus-stream-go"
+	mus "github.com/mus-format/mus-stream-go"
 	"github.com/mus-format/mus-stream-go/ord"
 )
 
@@ -23,7 +24,7 @@ var TraceSayHelloCmdMUS = traceSayHelloCmdMUS{}
 
 type traceSayHelloCmdMUS struct{}
 
-func (s traceSayHelloCmdMUS) Marshal(v otelcmd.TraceCmd[receiver.Greeter, hwcmds.SayHelloCmd], w muss.Writer) (n int, err error) {
+func (s traceSayHelloCmdMUS) Marshal(v otelcmd.TraceCmd[receiver.Greeter, hwcmds.SayHelloCmd], w mus.Writer) (n int, err error) {
 	n, err = ptrv5nnΔΣXZΔDA0nReL087SvgΞΞ.Marshal(v.MapCarrier, w)
 	if err != nil {
 		return
@@ -34,7 +35,7 @@ func (s traceSayHelloCmdMUS) Marshal(v otelcmd.TraceCmd[receiver.Greeter, hwcmds
 	return
 }
 
-func (s traceSayHelloCmdMUS) Unmarshal(r muss.Reader) (v otelcmd.TraceCmd[receiver.Greeter, hwcmds.SayHelloCmd], n int, err error) {
+func (s traceSayHelloCmdMUS) Unmarshal(r mus.Reader) (v otelcmd.TraceCmd[receiver.Greeter, hwcmds.SayHelloCmd], n int, err error) {
 	v.MapCarrier, n, err = ptrv5nnΔΣXZΔDA0nReL087SvgΞΞ.Unmarshal(r)
 	if err != nil {
 		return
@@ -50,7 +51,7 @@ func (s traceSayHelloCmdMUS) Size(v otelcmd.TraceCmd[receiver.Greeter, hwcmds.Sa
 	return size + hwcmds.SayHelloCmdMUS.Size(v.Cmd)
 }
 
-func (s traceSayHelloCmdMUS) Skip(r muss.Reader) (n int, err error) {
+func (s traceSayHelloCmdMUS) Skip(r mus.Reader) (n int, err error) {
 	n, err = ptrv5nnΔΣXZΔDA0nReL087SvgΞΞ.Skip(r)
 	if err != nil {
 		return
@@ -67,7 +68,7 @@ var TraceSayFancyHelloCmdMUS = traceSayFancyHelloCmdMUS{}
 
 type traceSayFancyHelloCmdMUS struct{}
 
-func (s traceSayFancyHelloCmdMUS) Marshal(v otelcmd.TraceCmd[receiver.Greeter, hwcmds.SayFancyHelloCmd], w muss.Writer) (n int, err error) {
+func (s traceSayFancyHelloCmdMUS) Marshal(v otelcmd.TraceCmd[receiver.Greeter, hwcmds.SayFancyHelloCmd], w mus.Writer) (n int, err error) {
 	n, err = ptrv5nnΔΣXZΔDA0nReL087SvgΞΞ.Marshal(v.MapCarrier, w)
 	if err != nil {
 		return
@@ -78,7 +79,7 @@ func (s traceSayFancyHelloCmdMUS) Marshal(v otelcmd.TraceCmd[receiver.Greeter, h
 	return
 }
 
-func (s traceSayFancyHelloCmdMUS) Unmarshal(r muss.Reader) (v otelcmd.TraceCmd[receiver.Greeter, hwcmds.SayFancyHelloCmd], n int, err error) {
+func (s traceSayFancyHelloCmdMUS) Unmarshal(r mus.Reader) (v otelcmd.TraceCmd[receiver.Greeter, hwcmds.SayFancyHelloCmd], n int, err error) {
 	v.MapCarrier, n, err = ptrv5nnΔΣXZΔDA0nReL087SvgΞΞ.Unmarshal(r)
 	if err != nil {
 		return
@@ -94,7 +95,7 @@ func (s traceSayFancyHelloCmdMUS) Size(v otelcmd.TraceCmd[receiver.Greeter, hwcm
 	return size + hwcmds.SayFancyHelloCmdMUS.Size(v.Cmd)
 }
 
-func (s traceSayFancyHelloCmdMUS) Skip(r muss.Reader) (n int, err error) {
+func (s traceSayFancyHelloCmdMUS) Skip(r mus.Reader) (n int, err error) {
 	n, err = ptrv5nnΔΣXZΔDA0nReL087SvgΞΞ.Skip(r)
 	if err != nil {
 		return
@@ -111,7 +112,7 @@ var CmdMUS = cmdMUS{}
 
 type cmdMUS struct{}
 
-func (s cmdMUS) Marshal(v core.Cmd[receiver.Greeter], w muss.Writer) (n int, err error) {
+func (s cmdMUS) Marshal(v core.Cmd[receiver.Greeter], w mus.Writer) (n int, err error) {
 	switch t := v.(type) {
 	case otelcmd.TraceCmd[receiver.Greeter, hwcmds.SayHelloCmd]:
 		return TraceSayHelloCmdDTS.Marshal(t, w)
@@ -120,11 +121,11 @@ func (s cmdMUS) Marshal(v core.Cmd[receiver.Greeter], w muss.Writer) (n int, err
 	case hwcmds.SayHelloCmd:
 		return hwcmds.SayHelloCmdDTS.Marshal(t, w)
 	default:
-		panic(fmt.Sprintf("unexpected %v type", t))
+		panic(fmt.Sprintf(com.ErrorPrefix+"unexpected %v type", t))
 	}
 }
 
-func (s cmdMUS) Unmarshal(r muss.Reader) (v core.Cmd[receiver.Greeter], n int, err error) {
+func (s cmdMUS) Unmarshal(r mus.Reader) (v core.Cmd[receiver.Greeter], n int, err error) {
 	dtm, n, err := dts.DTMSer.Unmarshal(r)
 	if err != nil {
 		return
@@ -138,7 +139,7 @@ func (s cmdMUS) Unmarshal(r muss.Reader) (v core.Cmd[receiver.Greeter], n int, e
 	case hwcmds.SayHelloCmdDTM:
 		v, n1, err = hwcmds.SayHelloCmdDTS.UnmarshalData(r)
 	default:
-		err = fmt.Errorf("unexpected %v DTM", dtm)
+		err = fmt.Errorf(com.ErrorPrefix+"unexpected %v DTM", dtm)
 		return
 	}
 	n += n1
@@ -154,11 +155,11 @@ func (s cmdMUS) Size(v core.Cmd[receiver.Greeter]) (size int) {
 	case hwcmds.SayHelloCmd:
 		return hwcmds.SayHelloCmdDTS.Size(t)
 	default:
-		panic(fmt.Sprintf("unexpected %v type", t))
+		panic(fmt.Sprintf(com.ErrorPrefix+"unexpected %v type", t))
 	}
 }
 
-func (s cmdMUS) Skip(r muss.Reader) (n int, err error) {
+func (s cmdMUS) Skip(r mus.Reader) (n int, err error) {
 	dtm, n, err := dts.DTMSer.Unmarshal(r)
 	if err != nil {
 		return
@@ -172,7 +173,7 @@ func (s cmdMUS) Skip(r muss.Reader) (n int, err error) {
 	case hwcmds.SayHelloCmdDTM:
 		n1, err = hwcmds.SayHelloCmdDTS.SkipData(r)
 	default:
-		err = fmt.Errorf("unexpected %v DTM", dtm)
+		err = fmt.Errorf(com.ErrorPrefix+"unexpected %v DTM", dtm)
 		return
 	}
 	n += n1

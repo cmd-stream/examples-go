@@ -7,20 +7,25 @@ import (
 
 	"github.com/cmd-stream/core-go"
 	"github.com/cmd-stream/examples-go/hello-world/receiver"
+	com "github.com/mus-format/common-go"
 	dts "github.com/mus-format/dts-stream-go"
-	muss "github.com/mus-format/mus-stream-go"
+	mus "github.com/mus-format/mus-stream-go"
 	"github.com/mus-format/mus-stream-go/ord"
+)
+
+const (
+	SayFancyHelloMultiCmdDTM com.DTM = iota + 1
 )
 
 var SayFancyHelloMultiCmdMUS = sayFancyHelloMultiCmdMUS{}
 
 type sayFancyHelloMultiCmdMUS struct{}
 
-func (s sayFancyHelloMultiCmdMUS) Marshal(v SayFancyHelloMultiCmd, w muss.Writer) (n int, err error) {
+func (s sayFancyHelloMultiCmdMUS) Marshal(v SayFancyHelloMultiCmd, w mus.Writer) (n int, err error) {
 	return ord.String.Marshal(v.str, w)
 }
 
-func (s sayFancyHelloMultiCmdMUS) Unmarshal(r muss.Reader) (v SayFancyHelloMultiCmd, n int, err error) {
+func (s sayFancyHelloMultiCmdMUS) Unmarshal(r mus.Reader) (v SayFancyHelloMultiCmd, n int, err error) {
 	v.str, n, err = ord.String.Unmarshal(r)
 	return
 }
@@ -29,7 +34,7 @@ func (s sayFancyHelloMultiCmdMUS) Size(v SayFancyHelloMultiCmd) (size int) {
 	return ord.String.Size(v.str)
 }
 
-func (s sayFancyHelloMultiCmdMUS) Skip(r muss.Reader) (n int, err error) {
+func (s sayFancyHelloMultiCmdMUS) Skip(r mus.Reader) (n int, err error) {
 	n, err = ord.String.Skip(r)
 	return
 }
@@ -40,16 +45,16 @@ var CmdMUS = cmdMUS{}
 
 type cmdMUS struct{}
 
-func (s cmdMUS) Marshal(v core.Cmd[receiver.Greeter], w muss.Writer) (n int, err error) {
+func (s cmdMUS) Marshal(v core.Cmd[receiver.Greeter], w mus.Writer) (n int, err error) {
 	switch t := v.(type) {
 	case SayFancyHelloMultiCmd:
 		return SayFancyHelloMultiCmdDTS.Marshal(t, w)
 	default:
-		panic(fmt.Sprintf("unexpected %v type", t))
+		panic(fmt.Sprintf(com.ErrorPrefix+"unexpected %v type", t))
 	}
 }
 
-func (s cmdMUS) Unmarshal(r muss.Reader) (v core.Cmd[receiver.Greeter], n int, err error) {
+func (s cmdMUS) Unmarshal(r mus.Reader) (v core.Cmd[receiver.Greeter], n int, err error) {
 	dtm, n, err := dts.DTMSer.Unmarshal(r)
 	if err != nil {
 		return
@@ -59,7 +64,7 @@ func (s cmdMUS) Unmarshal(r muss.Reader) (v core.Cmd[receiver.Greeter], n int, e
 	case SayFancyHelloMultiCmdDTM:
 		v, n1, err = SayFancyHelloMultiCmdDTS.UnmarshalData(r)
 	default:
-		err = fmt.Errorf("unexpected %v DTM", dtm)
+		err = fmt.Errorf(com.ErrorPrefix+"unexpected %v DTM", dtm)
 		return
 	}
 	n += n1
@@ -71,11 +76,11 @@ func (s cmdMUS) Size(v core.Cmd[receiver.Greeter]) (size int) {
 	case SayFancyHelloMultiCmd:
 		return SayFancyHelloMultiCmdDTS.Size(t)
 	default:
-		panic(fmt.Sprintf("unexpected %v type", t))
+		panic(fmt.Sprintf(com.ErrorPrefix+"unexpected %v type", t))
 	}
 }
 
-func (s cmdMUS) Skip(r muss.Reader) (n int, err error) {
+func (s cmdMUS) Skip(r mus.Reader) (n int, err error) {
 	dtm, n, err := dts.DTMSer.Unmarshal(r)
 	if err != nil {
 		return
@@ -85,7 +90,7 @@ func (s cmdMUS) Skip(r muss.Reader) (n int, err error) {
 	case SayFancyHelloMultiCmdDTM:
 		n1, err = SayFancyHelloMultiCmdDTS.SkipData(r)
 	default:
-		err = fmt.Errorf("unexpected %v DTM", dtm)
+		err = fmt.Errorf(com.ErrorPrefix+"unexpected %v DTM", dtm)
 		return
 	}
 	n += n1

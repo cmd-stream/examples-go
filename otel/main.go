@@ -99,12 +99,8 @@ func main() {
 	hooksFactory := MakeSenderHooksFactory[rcvr.Greeter](tcpAddr,
 		clientTracerProvider)
 	sender, err := sndr.Make(addr, clientCodec,
-		sndr.WithGroup(
-			grp.WithReconnect[rcvr.Greeter](),
-		),
-		sndr.WithSender(
-			sndr.WithHooksFactory(hooksFactory),
-		),
+		sndr.WithGroup(grp.WithReconnect[rcvr.Greeter]()),
+		sndr.WithSender(sndr.WithHooksFactory(hooksFactory)),
 		sndr.WithClientsCount[rcvr.Greeter](2),
 	)
 	assert.EqualError(err, nil)

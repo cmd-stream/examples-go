@@ -7,7 +7,6 @@ import (
 	"github.com/cmd-stream/core-go"
 	"github.com/cmd-stream/examples-go/hello-world/receiver"
 	"github.com/cmd-stream/examples-go/hello-world/results"
-	muss "github.com/mus-format/mus-stream-go"
 )
 
 // NewSayHelloCmd creates a new SayHelloCmd.
@@ -75,13 +74,4 @@ func (c SayHelloCmd) Exec(ctx context.Context, seq core.Seq, at time.Time,
 	// As you can see, the current Command sends back only one Result.
 	_, err = proxy.SendWithDeadline(seq, greeting, deadline)
 	return
-}
-
-func (c SayHelloCmd) MarshalTypedMUS(w muss.Writer) (n int, err error) {
-	return SayHelloCmdDTS.Marshal(c, w) // The Command will be marshalled as
-	// 'DTM + command data'.
-}
-
-func (c SayHelloCmd) SizeTypedMUS() (size int) {
-	return SayHelloCmdDTS.Size(c)
 }

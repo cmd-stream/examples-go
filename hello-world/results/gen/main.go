@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log"
 	"os"
 	"reflect"
 
@@ -20,32 +21,38 @@ func init() {
 
 // main function generates the mus-format.gen.go file, containing MUS
 // serialization code for results.Greeting and the core.Result interface.
+//
+// For more details, see https://github.com/mus-format/musgen-go.
 func main() {
 	// Create a generator.
 	g, err := musgen.NewCodeGenerator(
 		genops.WithPkgPath("github.com/cmd-stream/examples-go/hello-world/results"),
 		genops.WithStream(), // We're going to generate streaming code.
 	)
-	assert.EqualError(err, nil)
+	if err != nil {
+		panic(err)
+	}
 
-	// results.Greeting.
-	greetingType := reflect.TypeFor[results.Greeting]()
-	err = g.AddDefinedType(greetingType)
-	assert.EqualError(err, nil)
-
-	err = g.AddDTS(greetingType)
-	assert.EqualError(err, nil)
-
-	// core.Result interface.
-	err = g.AddInterface(reflect.TypeFor[core.Result](),
-		introps.WithImpl(greetingType),
-		introps.WithMarshaller(),
+	// Register core.Result interface.
+	err = g.RegisterInterface(reflect.TypeFor[core.Result](),
+		// Specify implementations.
+		introps.WithDefinedTypeImpl(reflect.TypeFor[results.Greeting]()),
+		// introps.WithRegisterMarshaller(), see the server-streaming example for
+		// usage.
 	)
-	assert.EqualError(err, nil)
+	if err != nil {
+		panic(err)
+	}
 
 	// Generate.
 	bs, err := g.Generate()
-	assert.EqualError(err, nil)
+	if err != nil {
+		log.Println(string(bs))
+	}
+
+	// Write to file.
 	err = os.WriteFile("./mus-format.gen.go", bs, 0644)
-	assert.EqualError(err, nil)
+	if err != nil {
+		panic(err)
+	}
 }

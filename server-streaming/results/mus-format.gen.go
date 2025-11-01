@@ -4,20 +4,23 @@ package results
 
 import (
 	"fmt"
-	"reflect"
 
 	"github.com/cmd-stream/core-go"
+	com "github.com/mus-format/common-go"
 	dts "github.com/mus-format/dts-stream-go"
-	exts "github.com/mus-format/ext-mus-stream-go"
-	muss "github.com/mus-format/mus-stream-go"
+	mus "github.com/mus-format/mus-stream-go"
 	"github.com/mus-format/mus-stream-go/ord"
+)
+
+const (
+	GreetingDTM com.DTM = iota + 1
 )
 
 var GreetingMUS = greetingMUS{}
 
 type greetingMUS struct{}
 
-func (s greetingMUS) Marshal(v Greeting, w muss.Writer) (n int, err error) {
+func (s greetingMUS) Marshal(v Greeting, w mus.Writer) (n int, err error) {
 	n, err = ord.String.Marshal(v.str, w)
 	if err != nil {
 		return
@@ -28,7 +31,7 @@ func (s greetingMUS) Marshal(v Greeting, w muss.Writer) (n int, err error) {
 	return
 }
 
-func (s greetingMUS) Unmarshal(r muss.Reader) (v Greeting, n int, err error) {
+func (s greetingMUS) Unmarshal(r mus.Reader) (v Greeting, n int, err error) {
 	v.str, n, err = ord.String.Unmarshal(r)
 	if err != nil {
 		return
@@ -44,7 +47,7 @@ func (s greetingMUS) Size(v Greeting) (size int) {
 	return size + ord.Bool.Size(v.lastOne)
 }
 
-func (s greetingMUS) Skip(r muss.Reader) (n int, err error) {
+func (s greetingMUS) Skip(r mus.Reader) (n int, err error) {
 	n, err = ord.String.Skip(r)
 	if err != nil {
 		return
@@ -61,14 +64,16 @@ var ResultMUS = resultMUS{}
 
 type resultMUS struct{}
 
-func (s resultMUS) Marshal(v core.Result, w muss.Writer) (n int, err error) {
-	if m, ok := v.(exts.MarshallerTypedMUS); ok {
-		return m.MarshalTypedMUS(w)
+func (s resultMUS) Marshal(v core.Result, w mus.Writer) (n int, err error) {
+	switch t := v.(type) {
+	case Greeting:
+		return GreetingDTS.Marshal(t, w)
+	default:
+		panic(fmt.Sprintf(com.ErrorPrefix+"unexpected %v type", t))
 	}
-	panic(fmt.Sprintf("%v doesn't implement the exts.MarshallerTypedMUS interface", reflect.TypeOf(v)))
 }
 
-func (s resultMUS) Unmarshal(r muss.Reader) (v core.Result, n int, err error) {
+func (s resultMUS) Unmarshal(r mus.Reader) (v core.Result, n int, err error) {
 	dtm, n, err := dts.DTMSer.Unmarshal(r)
 	if err != nil {
 		return
@@ -78,7 +83,7 @@ func (s resultMUS) Unmarshal(r muss.Reader) (v core.Result, n int, err error) {
 	case GreetingDTM:
 		v, n1, err = GreetingDTS.UnmarshalData(r)
 	default:
-		err = fmt.Errorf("unexpected %v DTM", dtm)
+		err = fmt.Errorf(com.ErrorPrefix+"unexpected %v DTM", dtm)
 		return
 	}
 	n += n1
@@ -86,13 +91,15 @@ func (s resultMUS) Unmarshal(r muss.Reader) (v core.Result, n int, err error) {
 }
 
 func (s resultMUS) Size(v core.Result) (size int) {
-	if m, ok := v.(exts.MarshallerTypedMUS); ok {
-		return m.SizeTypedMUS()
+	switch t := v.(type) {
+	case Greeting:
+		return GreetingDTS.Size(t)
+	default:
+		panic(fmt.Sprintf(com.ErrorPrefix+"unexpected %v type", t))
 	}
-	panic(fmt.Sprintf("%v doesn't implement the exts.MarshallerTypedMUS interface", reflect.TypeOf(v)))
 }
 
-func (s resultMUS) Skip(r muss.Reader) (n int, err error) {
+func (s resultMUS) Skip(r mus.Reader) (n int, err error) {
 	dtm, n, err := dts.DTMSer.Unmarshal(r)
 	if err != nil {
 		return
@@ -102,7 +109,7 @@ func (s resultMUS) Skip(r muss.Reader) (n int, err error) {
 	case GreetingDTM:
 		n1, err = GreetingDTS.SkipData(r)
 	default:
-		err = fmt.Errorf("unexpected %v DTM", dtm)
+		err = fmt.Errorf(com.ErrorPrefix+"unexpected %v DTM", dtm)
 		return
 	}
 	n += n1
