@@ -51,7 +51,7 @@ func main() {
 	}
 	// g.RegisterInterface() method cannot be used in all cases — for example,
 	// when a Command is already defined elsewhere. In such situations, use
-	// g.AddInterface() instead (see the server-streaming example).
+	// g.AddInterface() instead (see the otel example).
 
 	// Generate.
 	bs, err := g.Generate()
