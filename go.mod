@@ -4,14 +4,14 @@ go 1.23.0
 
 require (
 	github.com/brianvoe/gofakeit v3.18.0+incompatible
-	github.com/cmd-stream/cmd-stream-go v0.4.3
-	github.com/cmd-stream/codec-json-go v0.0.0-20251030154419-e4e16aff6ca5
-	github.com/cmd-stream/codec-mus-stream-go v0.0.0-20251030151338-73189e215130
-	github.com/cmd-stream/codec-protobuf-go v0.0.0-20251030025037-8687ed8d8e43
-	github.com/cmd-stream/core-go v0.0.0-20251027204658-b87de59c010f
-	github.com/cmd-stream/delegate-go v0.0.0-20251027205011-a3a232844e87
-	github.com/cmd-stream/handler-go v0.0.0-20251027205128-14741feb05d8
-	github.com/cmd-stream/transport-go v0.0.0-20251027205650-194496708c59
+	github.com/cmd-stream/cmd-stream-go v0.4.4
+	github.com/cmd-stream/codec-json-go v0.0.0-20251102042300-5f13e0e191a7
+	github.com/cmd-stream/codec-mus-stream-go v0.0.0-20251102044610-7e5e8a11b682
+	github.com/cmd-stream/codec-protobuf-go v0.0.0-20251102042926-a83b3227fcc0
+	github.com/cmd-stream/core-go v0.0.0-20251102020427-f23e62426486
+	github.com/cmd-stream/delegate-go v0.0.0-20251102020741-164e6005aadf
+	github.com/cmd-stream/handler-go v0.0.0-20251102020950-33189f2d8d28
+	github.com/cmd-stream/transport-go v0.0.0-20251102021115-2f2d348f4122
 	github.com/mus-format/common-go v0.0.0-20251026152644-9f5ac6728d8a
 	github.com/mus-format/dts-stream-go v0.9.1
 	github.com/mus-format/mus-stream-go v0.7.2
@@ -30,12 +30,12 @@ require (
 	google.golang.org/protobuf v1.36.10
 )
 
-require github.com/cmd-stream/codec-generic-go v0.0.0-20251030012221-8ba570d827d9 // indirect
+require github.com/cmd-stream/codec-generic-go v0.0.0-20251102041526-c9db158fec65 // indirect
 
 require (
 	github.com/cenkalti/backoff/v5 v5.0.2 // indirect
-	github.com/cmd-stream/otelcmd-stream-go v0.1.0
-	github.com/cmd-stream/sender-go v0.0.0-20251011192948-744d9ef75caa
+	github.com/cmd-stream/otelcmd-stream-go v0.1.1-0.20251102051623-25f8e8efd6e5
+	github.com/cmd-stream/sender-go v0.0.0-20251102050957-6655c15cfddf
 	github.com/go-logr/logr v1.4.2 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
 	github.com/google/uuid v1.6.0 // indirect
