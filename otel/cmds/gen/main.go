@@ -7,40 +7,40 @@ import (
 	"os"
 	"reflect"
 
-	"github.com/cmd-stream/core-go"
+	"github.com/cmd-stream/cmd-stream-go/core"
 	hwcmds "github.com/cmd-stream/examples-go/hello-world/cmds"
 	rcvr "github.com/cmd-stream/examples-go/hello-world/receiver"
 	"github.com/cmd-stream/examples-go/otel/cmds"
-	musgen "github.com/mus-format/musgen-go/mus"
-	genops "github.com/mus-format/musgen-go/options/generate"
-	introps "github.com/mus-format/musgen-go/options/interface"
+	musgen "github.com/mus-format/mus-gen-go/mus"
+	genopts "github.com/mus-format/mus-gen-go/options/gen"
+	intropts "github.com/mus-format/mus-gen-go/options/interface"
 )
 
 // main function generates the mus-format.gen.go file, containing MUS
 // serialization code for cmds.TraceSayHelloCmd, cmds.TraceSayFancyHelloCmd,
 // hwcmds.SayHelloCmd and core.Cmd interface.
 //
-// For more details, see https://github.com/mus-format/musgen-go.
+// For more details, see https://github.com/mus-format/mus-gen-go.
 func main() {
 	// Create generator.
-	g, err := musgen.NewCodeGenerator(
-		genops.WithPkgPath("github.com/cmd-stream/examples-go/otel/cmds"),
+	g, err := musgen.NewGenerator(
+		genopts.WithPkgPath("github.com/cmd-stream/examples-go/otel/cmds"),
 
-		genops.WithSerName(reflect.TypeFor[hwcmds.SayHelloCmd](),
+		genopts.WithSerName(reflect.TypeFor[hwcmds.SayHelloCmd](),
 			"hwcmds.SayHelloCmd"),
-		genops.WithSerName(reflect.TypeFor[hwcmds.SayFancyHelloCmd](),
+		genopts.WithSerName(reflect.TypeFor[hwcmds.SayFancyHelloCmd](),
 			"hwcmds.SayFancyHelloCmd"),
-		genops.WithSerName(reflect.TypeFor[cmds.TraceSayHelloCmd](),
+		genopts.WithSerName(reflect.TypeFor[cmds.TraceSayHelloCmd](),
 			"TraceSayHelloCmd"),
-		genops.WithSerName(reflect.TypeFor[cmds.TraceSayFancyHelloCmd](),
+		genopts.WithSerName(reflect.TypeFor[cmds.TraceSayFancyHelloCmd](),
 			"TraceSayFancyHelloCmd"),
 
-		genops.WithImportAlias("github.com/cmd-stream/examples-go/hello-world/cmds",
+		genopts.WithImportAlias("github.com/cmd-stream/examples-go/hello-world/cmds",
 			"hwcmds"),
-		genops.WithImportAlias("github.com/cmd-stream/otelcmd-stream-go",
+		genopts.WithImportAlias("github.com/cmd-stream/otelcmd-stream-go",
 			"otelcmd"),
 
-		genops.WithStream(), // We're going to generate streaming code.
+		genopts.WithStream(), // We're going to generate streaming code.
 	)
 	if err != nil {
 		panic(err)
@@ -53,7 +53,7 @@ func main() {
 		panic(err)
 	}
 
-	err = g.AddDTS(traceSayHelloCmdType)
+	err = g.AddTyped(traceSayHelloCmdType)
 	if err != nil {
 		panic(err)
 	}
@@ -65,7 +65,7 @@ func main() {
 		panic(err)
 	}
 
-	err = g.AddDTS(traceSayFancyHelloCmdType)
+	err = g.AddTyped(traceSayFancyHelloCmdType)
 	if err != nil {
 		panic(err)
 	}
@@ -76,9 +76,9 @@ func main() {
 	// This call instructs the generator to produce serializer for the core.Cmd
 	// interface.
 	err = g.AddInterface(reflect.TypeFor[core.Cmd[rcvr.Greeter]](),
-		introps.WithImpl(traceSayHelloCmdType),
-		introps.WithImpl(traceSayFancyHelloCmdType),
-		introps.WithImpl(reflect.TypeFor[hwcmds.SayHelloCmd]()),
+		intropts.WithImpl(traceSayHelloCmdType),
+		intropts.WithImpl(traceSayFancyHelloCmdType),
+		intropts.WithImpl(reflect.TypeFor[hwcmds.SayHelloCmd]()),
 	)
 	if err != nil {
 		panic(err)
@@ -91,7 +91,7 @@ func main() {
 	}
 
 	// Write to file.
-	err = os.WriteFile("./mus-format.gen.go", bs, 0644)
+	err = os.WriteFile("./mus.gen.go", bs, 0644)
 	if err != nil {
 		panic(err)
 	}

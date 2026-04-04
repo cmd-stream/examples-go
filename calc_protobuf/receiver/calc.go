@@ -14,7 +14,7 @@ type Calc interface {
 	Sub(a, b int64) int64
 }
 
-func NewCalc() calc {
+func NewCalc() Calc {
 	return calc{}
 }
 

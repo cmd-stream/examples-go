@@ -5,21 +5,21 @@ import (
 	"os"
 	"reflect"
 
-	"github.com/cmd-stream/core-go"
+	"github.com/cmd-stream/cmd-stream-go/core"
 	"github.com/cmd-stream/examples-go/server-streaming/results"
 
-	musgen "github.com/mus-format/musgen-go/mus"
-	genops "github.com/mus-format/musgen-go/options/generate"
-	introps "github.com/mus-format/musgen-go/options/interface"
+	musgen "github.com/mus-format/mus-gen-go/mus"
+	genops "github.com/mus-format/mus-gen-go/options/gen"
+	introps "github.com/mus-format/mus-gen-go/options/interface"
 )
 
 // Main generates the mus-format.gen.go file with MUS serialization code for
 // Greeting and the core.Result interface.
 //
-// For more details, see https://github.com/mus-format/musgen-go.
+// For more details, see https://github.com/mus-format/mus-gen-go.
 func main() {
 	// Create a generator.
-	g, err := musgen.NewCodeGenerator(
+	g, err := musgen.NewGenerator(
 		genops.WithPkgPath("github.com/cmd-stream/examples-go/server-streaming/results"),
 		genops.WithStream())
 	if err != nil {
@@ -46,7 +46,7 @@ func main() {
 	}
 
 	// Write to file.
-	err = os.WriteFile("./mus-format.gen.go", bs, 0644)
+	err = os.WriteFile("./mus.gen.go", bs, 0644)
 	if err != nil {
 		panic(err)
 	}

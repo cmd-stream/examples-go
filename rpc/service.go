@@ -7,7 +7,7 @@ import (
 	"github.com/cmd-stream/examples-go/hello-world/receiver"
 	"github.com/cmd-stream/examples-go/hello-world/results"
 
-	sndr "github.com/cmd-stream/sender-go"
+	sndr "github.com/cmd-stream/cmd-stream-go/sender"
 )
 
 type GreeterService struct {

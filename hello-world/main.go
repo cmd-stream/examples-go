@@ -1,25 +1,26 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net"
 	"sync"
 	"time"
 
 	cmdstream "github.com/cmd-stream/cmd-stream-go"
+	"github.com/cmd-stream/cmd-stream-go/core"
+	"github.com/cmd-stream/cmd-stream-go/handler"
 	codecmus "github.com/cmd-stream/codec-mus-stream-go"
-	"github.com/cmd-stream/core-go"
-	"github.com/cmd-stream/handler-go"
 
 	srv "github.com/cmd-stream/cmd-stream-go/server"
 
-	ccln "github.com/cmd-stream/core-go/client"
-	csrv "github.com/cmd-stream/core-go/server"
+	ccln "github.com/cmd-stream/cmd-stream-go/core/cln"
+	csrv "github.com/cmd-stream/cmd-stream-go/core/srv"
+	sndr "github.com/cmd-stream/cmd-stream-go/sender"
 	"github.com/cmd-stream/examples-go/hello-world/cmds"
 	rcvr "github.com/cmd-stream/examples-go/hello-world/receiver"
 	"github.com/cmd-stream/examples-go/hello-world/results"
 	"github.com/cmd-stream/examples-go/hello-world/utils"
-	sndr "github.com/cmd-stream/sender-go"
 	assert "github.com/ymz-ncnk/assert/panic"
 
 	cln "github.com/cmd-stream/cmd-stream-go/client"
@@ -34,7 +35,6 @@ func main() {
 	const addr = "127.0.0.1:9000"
 	var (
 		greeter = rcvr.NewGreeter("Hello", "incredible", " ")
-		invoker = srv.NewInvoker[rcvr.Greeter](greeter)
 		// Serializers of core.Cmd and core.Result interfaces allow building
 		// server/client codecs.
 		serverCodec = codecmus.NewServerCodec(cmds.CmdMUS, results.ResultMUS)
@@ -52,7 +52,9 @@ func main() {
 		wgS = &sync.WaitGroup{}
 	)
 
-	server := MakeServer(serverCodec, invoker)
+	// Start server.
+	fmt.Printf("Starting server on %s...\n", addr)
+	server, _ := MakeServer(serverCodec, greeter)
 	wgS.Add(1)
 	go func() {
 		server.ListenAndServe(addr)
@@ -62,6 +64,7 @@ func main() {
 
 	// Instead of an asynchronious client we will use Sender, that is build on
 	// the group of clients.
+	fmt.Println("Initializing sender and connecting...")
 	sender, err := MakeSender(addr, clientCodec)
 	assert.EqualError(err, nil)
 	SendCmds(sender)
@@ -79,12 +82,12 @@ func main() {
 }
 
 func MakeServer(codec srv.Codec[rcvr.Greeter],
-	invoker handler.Invoker[rcvr.Greeter],
-) *csrv.Server {
-	return cmdstream.MakeServer(codec, invoker,
+	receiver rcvr.Greeter,
+) (*csrv.Server, error) {
+	return cmdstream.NewServer(receiver, codec,
 		// // ServerInfo is optional and helps the client verify compatibility with the
 		// // server. It can identify supported commands or other server-specific
-		// // etails. As a byte slice, it can store any arbitrary data.
+		// // details. As a byte slice, it can store any arbitrary data.
 		// srv.WithServerInfo(...),
 
 		srv.WithCore(
@@ -118,7 +121,7 @@ func MakeServer(codec srv.Codec[rcvr.Greeter],
 func MakeSender(addr string, codec cln.Codec[rcvr.Greeter]) (
 	sender sndr.Sender[rcvr.Greeter], err error,
 ) {
-	return sndr.Make(addr, codec,
+	return cmdstream.NewSender(addr, codec,
 		sndr.WithGroup(
 			grp.WithClient[rcvr.Greeter](
 				// // Optional ServerInfo.
@@ -201,6 +204,7 @@ func SendCmds(sender sndr.Sender[rcvr.Greeter]) {
 		)
 		greeting, err := utils.SendCmd(cmd, sender)
 		assert.EqualError(err, nil)
+		fmt.Printf("Sending \"SayHelloCmd\" with \"world\"... Result: %q\n", greeting)
 		assert.Equal(greeting, want)
 		wg.Done()
 	}()
@@ -214,6 +218,7 @@ func SendCmds(sender sndr.Sender[rcvr.Greeter]) {
 		)
 		greeting, err := utils.SendCmd(cmd, sender)
 		assert.EqualError(err, nil)
+		fmt.Printf("Sending \"SayFancyHelloCmd\" with \"world\"... Result: %q\n", greeting)
 		assert.Equal(greeting, want)
 		wg.Done()
 	}()

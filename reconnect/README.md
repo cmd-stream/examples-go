@@ -1,26 +1,39 @@
-# reconnect
+# Reconnect Example
 
-This example demonstrates how clients can automatically restore their connection
-to the server.
+This example demonstrates how the `cmd-stream` library can automatically restore connections to the server using the `grp.WithReconnect` option. It shows a scenario where the server is intentionally closed and then restarted, and how the sender handles the reconnection.
+
+## Features
+
+- **Automatic Reconnection**: Shows how to configure a Sender with a client group that automatically attempts to reconnect upon connection loss.
+- **Resilient Communication**: Demonstrates that once the server is back online, the Sender can resume sending Commands without manual intervention.
 
 ## Details
 
-The connection can be lost in two ways:
+A connection can be lost while sending a Command or while waiting for a Result. In both cases, the reconnect mechanism allows the Command to be resent (assuming it is idempotent) after a short delay or upon the next attempt.
 
-- While sending a Command, causing `Client.Send()` to return an error.
-- While waiting for a Result, leading to uncertainty about whether the Command
-  was executed on the server.
-
-In both cases, using the reconnect client allows the Command to be resent
-(assuming it is idempotent) after a short delay. If the connection was
-re-established, normal operations resume, otherwise, `Client.Send()` will return
-an error again.
-
-To create a client group with reconnect clients:
-
+To enable reconnection in a Sender:
 ```go
-group, err := cmdstream.MakeClientGroup(1, codec, connFactory,
-  grp.WithReconnect[T](),
-  ...
+sender, err := cmdstream.NewSender(addr, codec,
+    sndr.WithGroup(
+        grp.WithReconnect[T](),
+    ),
 )
+```
+
+## Running the Example
+
+From the root of the `reconnect` directory, run:
+```bash
+go run .
+```
+
+## Expected Output
+
+```text
+Starting server on 127.0.0.1:9000...
+Initializing sender and connecting...
+Closing server...
+Starting server again...
+Waiting for the sender to reconnect...
+Sending "SayHelloCmd" with "world"... Result: "Hello world"
 ```

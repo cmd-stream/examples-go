@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/cmd-stream/core-go"
+	"github.com/cmd-stream/cmd-stream-go/core"
 )
 
 // Message implements both core.Cmd and core.Result interfaces.

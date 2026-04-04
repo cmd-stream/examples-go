@@ -5,25 +5,25 @@ import (
 	"os"
 	"reflect"
 
-	"github.com/cmd-stream/core-go"
+	"github.com/cmd-stream/cmd-stream-go/core"
 	rcvr "github.com/cmd-stream/examples-go/hello-world/receiver"
 	"github.com/cmd-stream/examples-go/server-streaming/cmds"
 
-	musgen "github.com/mus-format/musgen-go/mus"
-	genops "github.com/mus-format/musgen-go/options/generate"
-	introps "github.com/mus-format/musgen-go/options/interface"
+	musgen "github.com/mus-format/mus-gen-go/mus"
+	genopts "github.com/mus-format/mus-gen-go/options/gen"
+	intropts "github.com/mus-format/mus-gen-go/options/interface"
 )
 
 // Main generates the mus-format.gen.go file with MUS serialization code for
 // SayFancyHelloMultiCmd and the core.Cmd interface.
 //
-// For more details, see https://github.com/mus-format/musgen-go.
+// For more details, see https://github.com/mus-format/mus-gen-go.
 func main() {
 	// Create a generator.
-	g, err := musgen.NewCodeGenerator(
-		genops.WithPkgPath("github.com/cmd-stream/examples-go/server-streaming/cmds"),
-		genops.WithImport("github.com/cmd-stream/examples-go/hello-world/receiver"),
-		genops.WithStream())
+	g, err := musgen.NewGenerator(
+		genopts.WithPkgPath("github.com/cmd-stream/examples-go/server-streaming/cmds"),
+		genopts.WithImport("github.com/cmd-stream/examples-go/hello-world/receiver"),
+		genopts.WithStream())
 	if err != nil {
 		panic(err)
 	}
@@ -31,8 +31,8 @@ func main() {
 	// Register core.Cmd interface.
 	err = g.RegisterInterface(reflect.TypeFor[core.Cmd[rcvr.Greeter]](),
 		// Specify implementations.
-		introps.WithStructImpl(reflect.TypeFor[cmds.SayFancyHelloMultiCmd]()),
-		introps.WithRegisterMarshaller(), // With this option all Commands must
+		intropts.WithStructImpl(reflect.TypeFor[cmds.SayFancyHelloMultiCmd]()),
+		intropts.WithRegisterMarshaller(), // With this option all Commands must
 		// implement the MarshallerTypedMUS interface from
 		// github.com/mus-format/ext-stream-go.
 		// It's not required and only affects how the Commands are serialized.
@@ -48,7 +48,7 @@ func main() {
 	}
 
 	// Write to file.
-	err = os.WriteFile("./mus-format.gen.go", bs, 0644)
+	err = os.WriteFile("./mus.gen.go", bs, 0644)
 	if err != nil {
 		panic(err)
 	}

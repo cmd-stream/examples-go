@@ -2,20 +2,21 @@ package main
 
 import (
 	"crypto/tls"
+	"fmt"
 	"sync"
 	"time"
 
 	cmdstream "github.com/cmd-stream/cmd-stream-go"
+	"github.com/cmd-stream/cmd-stream-go/handler"
+	sndr "github.com/cmd-stream/cmd-stream-go/sender"
 	srv "github.com/cmd-stream/cmd-stream-go/server"
 	"github.com/cmd-stream/examples-go/hello-world/cmds"
 	rcvr "github.com/cmd-stream/examples-go/hello-world/receiver"
 	"github.com/cmd-stream/examples-go/hello-world/results"
 	utils "github.com/cmd-stream/examples-go/hello-world/utils"
-	"github.com/cmd-stream/handler-go"
-	sndr "github.com/cmd-stream/sender-go"
 
+	csrv "github.com/cmd-stream/cmd-stream-go/core/srv"
 	cdc "github.com/cmd-stream/codec-mus-stream-go"
-	csrv "github.com/cmd-stream/core-go/server"
 	assert "github.com/ymz-ncnk/assert/panic"
 )
 
@@ -32,7 +33,6 @@ func main() {
 
 	var (
 		greeter       = rcvr.NewGreeter("Hello", "incredible", " ")
-		invoker       = srv.NewInvoker[rcvr.Greeter](greeter)
 		serverCodec   = cdc.NewServerCodec(cmds.CmdMUS, results.ResultMUS)
 		clientCodec   = cdc.NewClientCodec(cmds.CmdMUS, results.ResultMUS)
 		serverTLSConf = tls.Config{Certificates: []tls.Certificate{serverCert}}
@@ -44,7 +44,7 @@ func main() {
 	)
 
 	// Make server.
-	server := cmdstream.MakeServer(serverCodec, invoker,
+	server, _ := cmdstream.NewServer(greeter, serverCodec,
 		srv.WithCore(
 			csrv.WithTLSConfig(&serverTLSConf),
 		),
@@ -53,6 +53,7 @@ func main() {
 		),
 	)
 	// Start server.
+	fmt.Printf("Starting TLS server on %s...\n", addr)
 	wgS.Add(1)
 	go func() {
 		server.ListenAndServe(addr)
@@ -61,7 +62,8 @@ func main() {
 	time.Sleep(100 * time.Millisecond)
 
 	// Make sender.
-	sender, err := sndr.Make(addr, clientCodec,
+	fmt.Println("Initializing sender and connecting...")
+	sender, err := cmdstream.NewSender(addr, clientCodec,
 		sndr.WithTLSConfig[rcvr.Greeter](&clientTLSConf),
 	)
 	assert.EqualError(err, nil)
@@ -84,5 +86,6 @@ func SendCmd(sender sndr.Sender[rcvr.Greeter]) {
 	)
 	greeting, err := utils.SendCmd(cmd, sender)
 	assert.EqualError(err, nil)
+	fmt.Printf("Sending \"SayHelloCmd\" with \"world\"... Result: %q\n", greeting)
 	assert.Equal(greeting, want)
 }

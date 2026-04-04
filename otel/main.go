@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"math/rand"
 	"net"
@@ -10,20 +11,20 @@ import (
 
 	"github.com/brianvoe/gofakeit"
 	cmdstream "github.com/cmd-stream/cmd-stream-go"
+	"github.com/cmd-stream/cmd-stream-go/core"
+	csrv "github.com/cmd-stream/cmd-stream-go/core/srv"
 	grp "github.com/cmd-stream/cmd-stream-go/group"
+	"github.com/cmd-stream/cmd-stream-go/handler"
+	sndr "github.com/cmd-stream/cmd-stream-go/sender"
+	hks "github.com/cmd-stream/cmd-stream-go/sender/hooks"
 	srv "github.com/cmd-stream/cmd-stream-go/server"
 	cdc "github.com/cmd-stream/codec-mus-stream-go"
-	"github.com/cmd-stream/core-go"
-	csrv "github.com/cmd-stream/core-go/server"
 	hwcmds "github.com/cmd-stream/examples-go/hello-world/cmds"
 	rcvr "github.com/cmd-stream/examples-go/hello-world/receiver"
 	"github.com/cmd-stream/examples-go/hello-world/results"
 	"github.com/cmd-stream/examples-go/hello-world/utils"
 	"github.com/cmd-stream/examples-go/otel/cmds"
-	"github.com/cmd-stream/handler-go"
 	otelcmd "github.com/cmd-stream/otelcmd-stream-go"
-	sndr "github.com/cmd-stream/sender-go"
-	hks "github.com/cmd-stream/sender-go/hooks"
 	assert "github.com/ymz-ncnk/assert/panic"
 	"github.com/ymz-ncnk/circbrk-go"
 
@@ -72,7 +73,7 @@ func main() {
 
 	var (
 		greeter = rcvr.NewGreeter("Hello", "incredible", " ")
-		invoker = otelcmd.NewInvoker(srv.NewInvoker[rcvr.Greeter](greeter),
+		invoker = otelcmd.NewInvoker(srv.NewInvoker(greeter),
 			otelcmd.WithServerAddr[rcvr.Greeter](tcpAddr),
 			otelcmd.WithTracerProvider[rcvr.Greeter](serverTracerProvider),
 		)
@@ -82,12 +83,13 @@ func main() {
 	)
 
 	// Make server.
-	server := cmdstream.MakeServer(serverCodec, invoker,
+	server, _ := cmdstream.NewServerWithInvoker(invoker, serverCodec,
 		srv.WithHandler(
 			handler.WithAt(),
 		),
 	)
 	// Start server.
+	fmt.Printf("Starting server on %s...\n", addr)
 	wgS.Add(1)
 	go func() {
 		server.ListenAndServe(addr)
@@ -96,15 +98,18 @@ func main() {
 	time.Sleep(100 * time.Millisecond)
 
 	// Make sender.
+	fmt.Println("Initializing sender and connecting...")
 	hooksFactory := MakeSenderHooksFactory[rcvr.Greeter](tcpAddr,
 		clientTracerProvider)
-	sender, err := sndr.Make(addr, clientCodec,
+	sender, err := cmdstream.NewSender(addr, clientCodec,
 		sndr.WithGroup(grp.WithReconnect[rcvr.Greeter]()),
 		sndr.WithSender(sndr.WithHooksFactory(hooksFactory)),
 		sndr.WithClientsCount[rcvr.Greeter](2),
 	)
 	assert.EqualError(err, nil)
+
 	// Send Commands.
+	fmt.Println("Processing commands with server restarts...")
 	SendCmdsWithServerRestart(addr, sender, server, wgS)
 
 	// Close sender.

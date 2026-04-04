@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/cmd-stream/core-go"
+	"github.com/cmd-stream/cmd-stream-go/core"
 	"github.com/cmd-stream/examples-go/hello-world/receiver"
 	"github.com/cmd-stream/examples-go/hello-world/results"
 )
@@ -67,6 +67,6 @@ func (c SayHelloCmd) Exec(ctx context.Context, seq core.Seq, at time.Time,
 	// Result.LastOne() == true.
 
 	// As you can see, the current Command sends back only one Result.
-	_, err = proxy.SendWithDeadline(seq, greeting, deadline)
+	_, err = proxy.SendWithDeadline(deadline, seq, greeting)
 	return
 }

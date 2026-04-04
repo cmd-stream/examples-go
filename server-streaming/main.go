@@ -2,17 +2,18 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"sync"
 	"time"
 
 	cmdstream "github.com/cmd-stream/cmd-stream-go"
-	"github.com/cmd-stream/core-go"
+	"github.com/cmd-stream/cmd-stream-go/core"
+	"github.com/cmd-stream/cmd-stream-go/handler"
+	sndr "github.com/cmd-stream/cmd-stream-go/sender"
 	rcvr "github.com/cmd-stream/examples-go/hello-world/receiver"
 	"github.com/cmd-stream/examples-go/hello-world/utils"
 	"github.com/cmd-stream/examples-go/server-streaming/cmds"
 	"github.com/cmd-stream/examples-go/server-streaming/results"
-	"github.com/cmd-stream/handler-go"
-	sndr "github.com/cmd-stream/sender-go"
 
 	srv "github.com/cmd-stream/cmd-stream-go/server"
 	cdc "github.com/cmd-stream/codec-mus-stream-go"
@@ -27,19 +28,19 @@ func main() {
 	const addr = "127.0.0.1:9000"
 	var (
 		greeter     = rcvr.NewGreeter("Hello", "incredible", " ")
-		invoker     = srv.NewInvoker[rcvr.Greeter](greeter)
 		serverCodec = cdc.NewServerCodec(cmds.CmdMUS, results.ResultMUS)
 		clientCodec = cdc.NewClientCodec(cmds.CmdMUS, results.ResultMUS)
 		wgS         = &sync.WaitGroup{}
 	)
 
 	// Make server.
-	server := cmdstream.MakeServer(serverCodec, invoker,
+	server, _ := cmdstream.NewServer(greeter, serverCodec,
 		srv.WithHandler(
 			handler.WithAt(),
 		),
 	)
 	// Start server.
+	fmt.Printf("Starting server on %s...\n", addr)
 	wgS.Add(1)
 	go func() {
 		server.ListenAndServe(addr)
@@ -48,7 +49,8 @@ func main() {
 	time.Sleep(100 * time.Millisecond)
 
 	// Make keepalive sender.
-	sender, err := sndr.Make(addr, clientCodec)
+	fmt.Println("Initializing sender and connecting...")
+	sender, err := cmdstream.NewSender(addr, clientCodec)
 	assert.EqualError(err, nil)
 	// Send Command that sends back several Results.
 	SendMultiCmd(sender)
@@ -75,6 +77,7 @@ func SendMultiCmd(sender sndr.Sender[rcvr.Greeter]) {
 		i             int
 		resultHandler sndr.ResultHandlerFn = func(result core.Result, err error) error {
 			greeting := result.(results.Greeting)
+			fmt.Printf("Received... Result: %q\n", greeting)
 			assert.Equal(greeting, want[i])
 			i++
 			return nil
@@ -82,7 +85,7 @@ func SendMultiCmd(sender sndr.Sender[rcvr.Greeter]) {
 		deadline = time.Now().Add(utils.CmdSendDuration)
 	)
 	defer cancel()
-	err := sender.SendMultiWithDeadline(ctx, cmd, len(want), resultHandler,
-		deadline)
+	fmt.Println("Sending multi-result command...")
+	err := sender.SendMultiWithDeadline(ctx, deadline, cmd, len(want), resultHandler)
 	assert.EqualError(err, nil)
 }

@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/cmd-stream/core-go"
-	"github.com/cmd-stream/transport-go"
+	"github.com/cmd-stream/cmd-stream-go/core"
+	"github.com/cmd-stream/cmd-stream-go/transport"
 	"github.com/mus-format/mus-stream-go/ord"
 )
 

@@ -4,9 +4,9 @@ import (
 	"context"
 	"time"
 
-	"github.com/cmd-stream/core-go"
+	"github.com/cmd-stream/cmd-stream-go/core"
+	sndr "github.com/cmd-stream/cmd-stream-go/sender"
 	"github.com/cmd-stream/examples-go/hello-world/results"
-	sndr "github.com/cmd-stream/sender-go"
 )
 
 const (
@@ -26,7 +26,7 @@ func SendCmd[T any](cmd core.Cmd[T], sender sndr.Sender[T]) (
 		deadline = time.Now().Add(CmdSendDuration)
 	)
 	defer cancel()
-	result, err := sender.SendWithDeadline(ctx, cmd, deadline)
+	result, err := sender.SendWithDeadline(ctx, deadline, cmd)
 	if err != nil {
 		return
 	}

@@ -14,7 +14,7 @@ type Greeter interface {
 }
 
 // NewGreeter returns a new greeter.
-func NewGreeter(interjection, adjective, sep string) greeter {
+func NewGreeter(interjection, adjective, sep string) Greeter {
 	return greeter{
 		interjection: interjection,
 		adjective:    adjective,

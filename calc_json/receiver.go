@@ -1,4 +1,4 @@
-package receiver
+package main
 
 // Calc serves as the application's "Receiver" or service layer.
 //
@@ -14,7 +14,7 @@ type Calc interface {
 	Sub(a, b int) int
 }
 
-func NewCalc() calc {
+func NewCalc() Calc {
 	return calc{}
 }
 
