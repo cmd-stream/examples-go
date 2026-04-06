@@ -27,7 +27,6 @@ import (
 	otelcmd "github.com/cmd-stream/otelcmd-stream-go"
 	assert "github.com/ymz-ncnk/assert/panic"
 	"github.com/ymz-ncnk/circbrk-go"
-
 	"go.opentelemetry.io/otel/trace"
 )
 

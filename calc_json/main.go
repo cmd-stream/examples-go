@@ -7,8 +7,7 @@ import (
 	"time"
 
 	cmdstream "github.com/cmd-stream/cmd-stream-go"
-
-	codec "github.com/cmd-stream/codec-json-go"
+	cdc "github.com/cmd-stream/codec-json-go"
 )
 
 func main() {
@@ -22,8 +21,8 @@ func main() {
 		resultTypes = []reflect.Type{
 			reflect.TypeFor[CalcResult](),
 		}
-		serverCodec = codec.NewServerCodec[Calc](cmdTypes, resultTypes)
-		clientCodec = codec.NewClientCodec[Calc](cmdTypes, resultTypes)
+		serverCodec = cdc.NewServerCodec[Calc](cmdTypes, resultTypes)
+		clientCodec = cdc.NewClientCodec[Calc](cmdTypes, resultTypes)
 	)
 
 	// Start server.

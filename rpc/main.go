@@ -9,11 +9,10 @@ import (
 	cmdstream "github.com/cmd-stream/cmd-stream-go"
 	"github.com/cmd-stream/cmd-stream-go/handler"
 	srv "github.com/cmd-stream/cmd-stream-go/server"
+	cdc "github.com/cmd-stream/codec-mus-stream-go"
 	"github.com/cmd-stream/examples-go/hello-world/cmds"
 	rcvr "github.com/cmd-stream/examples-go/hello-world/receiver"
 	"github.com/cmd-stream/examples-go/hello-world/results"
-
-	cdc "github.com/cmd-stream/codec-mus-stream-go"
 	assert "github.com/ymz-ncnk/assert/panic"
 )
 

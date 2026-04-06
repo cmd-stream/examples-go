@@ -7,11 +7,10 @@ import (
 	"time"
 
 	cmdstream "github.com/cmd-stream/cmd-stream-go"
+	cdc "github.com/cmd-stream/codec-protobuf-go"
 	"github.com/cmd-stream/examples-go/calc_protobuf/cmds"
 	rcvr "github.com/cmd-stream/examples-go/calc_protobuf/receiver"
 	"github.com/cmd-stream/examples-go/calc_protobuf/results"
-
-	codec "github.com/cmd-stream/codec-protobuf-go"
 )
 
 func main() {
@@ -24,8 +23,8 @@ func main() {
 		resultTypes = []reflect.Type{
 			reflect.TypeFor[*results.CalcResult](),
 		}
-		serverCodec = codec.NewServerCodec[rcvr.Calc](cmdTypes, resultTypes)
-		clientCodec = codec.NewClientCodec[rcvr.Calc](cmdTypes, resultTypes)
+		serverCodec = cdc.NewServerCodec[rcvr.Calc](cmdTypes, resultTypes)
+		clientCodec = cdc.NewClientCodec[rcvr.Calc](cmdTypes, resultTypes)
 	)
 
 	// Start server.
