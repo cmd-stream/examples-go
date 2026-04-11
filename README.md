@@ -34,6 +34,8 @@ need:
 - **[`keepalive`](keepalive)**: Maintaining idle connections via heartbeat
   (Ping) mechanisms.
 - **[`reconnect`](reconnect)**: Automatic reconnection logic.
+- **[`resilient`](resilient)**: Comprehensive reliability setup with
+  auto-reconnection, heartbeats, and circuit breaking.
 
 ### Specialized Patterns
 
