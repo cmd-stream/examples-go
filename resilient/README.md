@@ -47,7 +47,7 @@ Sending message2... Error: EOF
 Sending message3... Error: timeout
 Circuit breaker state changed to: Open
 Sending message4... Error: timeout
-Starting server on 127.0.0.1:9000...
+-- Starting server on 127.0.0.1:9000... --
 Circuit breaker state changed to: HalfOpen
 Circuit breaker state changed to: Closed
 Sending message5... Result: message5

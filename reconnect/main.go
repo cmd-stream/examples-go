@@ -58,13 +58,13 @@ func main() {
 	assert.EqualError(err, nil)
 
 	// Close server.
-	fmt.Println("Closing server...")
+	fmt.Println("-- Closing server... --")
 	err = server.Close()
 	assert.EqualError(err, nil)
 
 	// Start the server again after some time.
 	time.Sleep(time.Second)
-	fmt.Println("Starting server again...")
+	fmt.Println("-- Starting server again... --")
 	wgS.Add(1)
 	go func() {
 		server.ListenAndServe(addr)

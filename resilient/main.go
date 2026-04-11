@@ -73,7 +73,7 @@ func main() {
 	cancel4()
 	fmt.Printf("Sending message4... Error: %v\n", err)
 
-	fmt.Printf("Starting server on %s...\n", addr)
+	fmt.Printf("-- Starting server on %s... --\n", addr)
 	go func() {
 		server.ListenAndServe(addr)
 	}()
