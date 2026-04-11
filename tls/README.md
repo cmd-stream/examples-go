@@ -25,5 +25,5 @@ go run .
 ```text
 Starting TLS server on 127.0.0.1:9000...
 Initializing sender and connecting...
-Sending "SayHelloCmd" with "world"... Result: "Hello world"
+Sending "message"... Result: "message"
 ```

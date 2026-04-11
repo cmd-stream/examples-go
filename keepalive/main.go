@@ -1,7 +1,9 @@
 package main
 
 import (
+	"context"
 	"fmt"
+	"reflect"
 	"sync"
 	"time"
 
@@ -12,11 +14,8 @@ import (
 	"github.com/cmd-stream/cmd-stream-go/handler"
 	sndr "github.com/cmd-stream/cmd-stream-go/sender"
 	srv "github.com/cmd-stream/cmd-stream-go/server"
-	cdc "github.com/cmd-stream/codec-mus-stream-go"
-	"github.com/cmd-stream/examples-go/hello-world/cmds"
-	rcvr "github.com/cmd-stream/examples-go/hello-world/receiver"
-	"github.com/cmd-stream/examples-go/hello-world/results"
-	"github.com/cmd-stream/examples-go/hello-world/utils"
+	cdc "github.com/cmd-stream/codec-json-go"
+	examples "github.com/cmd-stream/examples-go"
 	assert "github.com/ymz-ncnk/assert/panic"
 )
 
@@ -32,19 +31,25 @@ func init() {
 func main() {
 	const addr = "127.0.0.1:9000"
 	var (
-		greeter     = rcvr.NewGreeter("Hello", "incredible", " ")
-		serverCodec = cdc.NewServerCodec(cmds.CmdMUS, results.ResultMUS)
-		clientCodec = cdc.NewClientCodec(cmds.CmdMUS, results.ResultMUS)
+		cmdTypes = []reflect.Type{
+			reflect.TypeFor[examples.Message](),
+		}
+		resultTypes = []reflect.Type{
+			reflect.TypeFor[examples.Message](),
+		}
+		serverCodec = cdc.NewServerCodec[struct{}](cmdTypes, resultTypes)
+		clientCodec = cdc.NewClientCodec[struct{}](cmdTypes, resultTypes)
 		wgS         = &sync.WaitGroup{}
 	)
 
 	// Make server.
-	server, _ := cmdstream.NewServer(greeter, serverCodec,
+	server, err := cmdstream.NewServer(struct{}{}, serverCodec,
 		srv.WithHandler(
-			handler.WithCmdReceiveDuration(utils.CmdReceiveDuration),
+			handler.WithCmdReceiveDuration(500*time.Millisecond),
 			handler.WithAt(),
 		),
 	)
+	assert.EqualError(err, nil)
 	// Start server.
 	fmt.Printf("Starting server on %s...\n", addr)
 	wgS.Add(1)
@@ -70,12 +75,12 @@ func main() {
 	wgS.Wait()
 }
 
-func MakeKeepaliveSender(addr string, codec cln.Codec[rcvr.Greeter]) (
-	sender sndr.Sender[rcvr.Greeter], err error,
+func MakeKeepaliveSender(addr string, codec cln.Codec[struct{}]) (
+	sender sndr.Sender[struct{}], err error,
 ) {
 	return cmdstream.NewSender(addr, codec,
 		sndr.WithGroup(
-			grp.WithClient[rcvr.Greeter](
+			grp.WithClient[struct{}](
 				cln.WithKeepalive(
 					dcln.WithKeepaliveTime(KeepaliveTime),
 					dcln.WithKeepaliveIntvl(KeepaliveIntvl),
@@ -85,33 +90,33 @@ func MakeKeepaliveSender(addr string, codec cln.Codec[rcvr.Greeter]) (
 	)
 }
 
-func SendCmds(sender sndr.Sender[rcvr.Greeter]) {
-	// Send SayHelloCmd.
+func SendCmds(sender sndr.Sender[struct{}]) {
+	// Send message.
 	{
 		var (
-			cmd  = cmds.SayHelloCmd{Str: "world"}
-			want = results.Greeting("Hello world")
+			cmd  = examples.Message("one")
+			want = examples.Message("one")
 		)
-		greeting, err := utils.SendCmd(cmd, sender)
+		result, err := sender.Send(context.Background(), cmd)
 		assert.EqualError(err, nil)
-		fmt.Printf("Sending \"SayHelloCmd\" with \"world\"... Result: %q\n", greeting)
-		assert.Equal(greeting, want)
+		fmt.Printf("Sending \"%v\"... Result: \"%v\"\n", cmd, result)
+		assert.Equal(result.(examples.Message), want)
 	}
 
 	// Ping-Pong time... When there are no Commands to send, clients will send
 	// PingCmd to the server to maintain the connection.
 	fmt.Println("Ping-Pong time...")
-	time.Sleep(2 * utils.CmdReceiveDuration)
+	time.Sleep(1 * time.Second)
 
-	// Still able to send SayFancyHelloCmd.
+	// Still able to send message.
 	{
 		var (
-			cmd  = cmds.SayFancyHelloCmd{Str: "world"}
-			want = results.Greeting("Hello incredible world")
+			cmd  = examples.Message("two")
+			want = examples.Message("two")
 		)
-		greeting, err := utils.SendCmd(cmd, sender)
+		result, err := sender.Send(context.Background(), cmd)
 		assert.EqualError(err, nil)
-		fmt.Printf("Sending \"SayFancyHelloCmd\" with \"world\"... Result: %q\n", greeting)
-		assert.Equal(greeting, want)
+		fmt.Printf("Sending \"%v\"... Result: \"%v\"\n", cmd, result)
+		assert.Equal(result.(examples.Message), want)
 	}
 }

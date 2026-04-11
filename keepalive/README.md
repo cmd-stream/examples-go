@@ -35,7 +35,7 @@ go run .
 ```text
 Starting server on 127.0.0.1:9000...
 Initializing sender and connecting...
-Sending "SayHelloCmd" with "world"... Result: "Hello world"
+Sending "one"... Result: "one"
 Ping-Pong time...
-Sending "SayFancyHelloCmd" with "world"... Result: "Hello incredible world"
+Sending "two"... Result: "two"
 ```

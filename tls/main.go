@@ -1,8 +1,10 @@
 package main
 
 import (
+	"context"
 	"crypto/tls"
 	"fmt"
+	"reflect"
 	"sync"
 	"time"
 
@@ -11,11 +13,8 @@ import (
 	"github.com/cmd-stream/cmd-stream-go/handler"
 	sndr "github.com/cmd-stream/cmd-stream-go/sender"
 	srv "github.com/cmd-stream/cmd-stream-go/server"
-	cdc "github.com/cmd-stream/codec-mus-stream-go"
-	"github.com/cmd-stream/examples-go/hello-world/cmds"
-	rcvr "github.com/cmd-stream/examples-go/hello-world/receiver"
-	"github.com/cmd-stream/examples-go/hello-world/results"
-	utils "github.com/cmd-stream/examples-go/hello-world/utils"
+	cdc "github.com/cmd-stream/codec-json-go"
+	examples "github.com/cmd-stream/examples-go"
 	assert "github.com/ymz-ncnk/assert/panic"
 )
 
@@ -31,9 +30,14 @@ func main() {
 	assert.EqualError(err, nil)
 
 	var (
-		greeter       = rcvr.NewGreeter("Hello", "incredible", " ")
-		serverCodec   = cdc.NewServerCodec(cmds.CmdMUS, results.ResultMUS)
-		clientCodec   = cdc.NewClientCodec(cmds.CmdMUS, results.ResultMUS)
+		cmdTypes = []reflect.Type{
+			reflect.TypeFor[examples.Message](),
+		}
+		resultTypes = []reflect.Type{
+			reflect.TypeFor[examples.Message](),
+		}
+		serverCodec   = cdc.NewServerCodec[struct{}](cmdTypes, resultTypes)
+		clientCodec   = cdc.NewClientCodec[struct{}](cmdTypes, resultTypes)
 		serverTLSConf = tls.Config{Certificates: []tls.Certificate{serverCert}}
 		clientTLSConf = tls.Config{
 			Certificates:       []tls.Certificate{clientCert},
@@ -43,7 +47,7 @@ func main() {
 	)
 
 	// Make server.
-	server, _ := cmdstream.NewServer(greeter, serverCodec,
+	server, err := cmdstream.NewServer(struct{}{}, serverCodec,
 		srv.WithCore(
 			csrv.WithTLSConfig(&serverTLSConf),
 		),
@@ -51,6 +55,7 @@ func main() {
 			handler.WithAt(),
 		),
 	)
+	assert.EqualError(err, nil)
 	// Start server.
 	fmt.Printf("Starting TLS server on %s...\n", addr)
 	wgS.Add(1)
@@ -63,9 +68,10 @@ func main() {
 	// Make sender.
 	fmt.Println("Initializing sender and connecting...")
 	sender, err := cmdstream.NewSender(addr, clientCodec,
-		sndr.WithTLSConfig[rcvr.Greeter](&clientTLSConf),
+		sndr.WithTLSConfig[struct{}](&clientTLSConf),
 	)
 	assert.EqualError(err, nil)
+
 	// Send Command.
 	SendCmd(sender)
 
@@ -78,13 +84,13 @@ func main() {
 	wgS.Wait()
 }
 
-func SendCmd(sender sndr.Sender[rcvr.Greeter]) {
+func SendCmd(sender sndr.Sender[struct{}]) {
 	var (
-		cmd  = cmds.SayHelloCmd{Str: "world"}
-		want = results.Greeting("Hello world")
+		cmd  = examples.Message("message")
+		want = examples.Message("message")
 	)
-	greeting, err := utils.SendCmd(cmd, sender)
+	result, err := sender.Send(context.Background(), cmd)
 	assert.EqualError(err, nil)
-	fmt.Printf("Sending \"SayHelloCmd\" with \"world\"... Result: %q\n", greeting)
-	assert.Equal(greeting, want)
+	fmt.Printf("Sending \"%v\"... Result: \"%v\"\n", cmd, result)
+	assert.Equal(result.(examples.Message), want)
 }

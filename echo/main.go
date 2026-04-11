@@ -9,6 +9,7 @@ import (
 	cln "github.com/cmd-stream/cmd-stream-go/client"
 	"github.com/cmd-stream/cmd-stream-go/core"
 	ccln "github.com/cmd-stream/cmd-stream-go/core/cln"
+	examples "github.com/cmd-stream/examples-go"
 	assert "github.com/ymz-ncnk/assert/panic"
 )
 
@@ -52,14 +53,14 @@ func MakeClient(addr string, codec cln.Codec[struct{}]) (
 
 func SendCmd(client *ccln.Client[struct{}]) {
 	var (
-		cmd          = Message("one two three")
+		cmd          = examples.Message("one two three")
 		asyncResults = make(chan core.AsyncResult, 1)
 	)
 	fmt.Printf("Sending message: \"%v\"\n", cmd)
 	_, _, err := client.Send(cmd, asyncResults)
 	assert.EqualError(err, nil)
 
-	result := (<-asyncResults).Result.(Message)
+	result := (<-asyncResults).Result.(examples.Message)
 	fmt.Printf("Received echo... Result: %q\n", result)
 	assert.Equal(cmd, result)
 }

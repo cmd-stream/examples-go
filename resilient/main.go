@@ -13,6 +13,7 @@ import (
 	sndr "github.com/cmd-stream/cmd-stream-go/sender"
 	hks "github.com/cmd-stream/cmd-stream-go/sender/hooks"
 	cdc "github.com/cmd-stream/codec-json-go"
+	examples "github.com/cmd-stream/examples-go"
 	assert "github.com/ymz-ncnk/assert/panic"
 	"github.com/ymz-ncnk/circbrk-go"
 )
@@ -21,10 +22,10 @@ func main() {
 	const addr = "127.0.0.1:9000"
 	var (
 		cmdTypes = []reflect.Type{
-			reflect.TypeFor[Message](),
+			reflect.TypeFor[examples.Message](),
 		}
 		resultTypes = []reflect.Type{
-			reflect.TypeFor[Message](),
+			reflect.TypeFor[examples.Message](),
 		}
 		serverCodec = cdc.NewServerCodec[struct{}](cmdTypes, resultTypes)
 		clientCodec = cdc.NewClientCodec[struct{}](cmdTypes, resultTypes)
@@ -48,7 +49,7 @@ func main() {
 	defer sender.Close()
 
 	// Send message.
-	msg1, err := sender.Send(context.Background(), Message("message1"))
+	msg1, err := sender.Send(context.Background(), examples.Message("message1"))
 	assert.EqualError(err, nil)
 	fmt.Printf("Sending message1... Result: %v\n", msg1)
 
@@ -58,17 +59,17 @@ func main() {
 
 	// Send messages to trigger (open) the circuit breaker.
 	ctx2, cancel2 := context.WithTimeout(context.Background(), 100*time.Millisecond)
-	_, err = sender.Send(ctx2, Message("message2"))
+	_, err = sender.Send(ctx2, examples.Message("message2"))
 	cancel2()
 	fmt.Printf("Sending message2... Error: %v\n", err)
 
 	ctx3, cancel3 := context.WithTimeout(context.Background(), 100*time.Millisecond)
-	_, err = sender.Send(ctx3, Message("message3"))
+	_, err = sender.Send(ctx3, examples.Message("message3"))
 	cancel3()
 	fmt.Printf("Sending message3... Error: %v\n", err)
 
 	ctx4, cancel4 := context.WithTimeout(context.Background(), 100*time.Millisecond)
-	_, err = sender.Send(ctx4, Message("message4"))
+	_, err = sender.Send(ctx4, examples.Message("message4"))
 	cancel4()
 	fmt.Printf("Sending message4... Error: %v\n", err)
 
@@ -79,7 +80,7 @@ func main() {
 	time.Sleep(2 * time.Second)
 
 	// Send message.
-	msg5, err := sender.Send(context.Background(), Message("message5"))
+	msg5, err := sender.Send(context.Background(), examples.Message("message5"))
 	assert.EqualError(err, nil)
 	fmt.Printf("Sending message5... Result: %v\n", msg5)
 }

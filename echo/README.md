@@ -9,7 +9,7 @@ This is a simple example that demonstrates the basic request-response pattern us
 
 ## Key Components
 
-- **[Message](message.go)**: A simple string-based Command and Result type.
+- **[Message](../message.go)**: A simple string-based Command and Result type.
 - **[ClientCodec](codecs.go)** & **[ServerCodec](codecs.go)**: Simple custom codecs for the `Message` type.
 
 ## Running the Example

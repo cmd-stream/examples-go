@@ -1,7 +1,9 @@
 package main
 
 import (
+	"context"
 	"fmt"
+	"reflect"
 	"sync"
 	"time"
 
@@ -11,11 +13,8 @@ import (
 	"github.com/cmd-stream/cmd-stream-go/handler"
 	sndr "github.com/cmd-stream/cmd-stream-go/sender"
 	srv "github.com/cmd-stream/cmd-stream-go/server"
-	cdc "github.com/cmd-stream/codec-mus-stream-go"
-	"github.com/cmd-stream/examples-go/hello-world/cmds"
-	rcvr "github.com/cmd-stream/examples-go/hello-world/receiver"
-	"github.com/cmd-stream/examples-go/hello-world/results"
-	"github.com/cmd-stream/examples-go/hello-world/utils"
+	cdc "github.com/cmd-stream/codec-json-go"
+	examples "github.com/cmd-stream/examples-go"
 	assert "github.com/ymz-ncnk/assert/panic"
 )
 
@@ -26,18 +25,24 @@ func init() {
 func main() {
 	const addr = "127.0.0.1:9000"
 	var (
-		greeter     = rcvr.NewGreeter("Hello", "incredible", " ")
-		serverCodec = cdc.NewServerCodec(cmds.CmdMUS, results.ResultMUS)
-		clientCodec = cdc.NewClientCodec(cmds.CmdMUS, results.ResultMUS)
+		cmdTypes = []reflect.Type{
+			reflect.TypeFor[examples.Message](),
+		}
+		resultTypes = []reflect.Type{
+			reflect.TypeFor[examples.Message](),
+		}
+		serverCodec = cdc.NewServerCodec[struct{}](cmdTypes, resultTypes)
+		clientCodec = cdc.NewClientCodec[struct{}](cmdTypes, resultTypes)
 		wgS         = &sync.WaitGroup{}
 	)
 
 	// Make server.
-	server, _ := cmdstream.NewServer(greeter, serverCodec,
+	server, err := cmdstream.NewServer(struct{}{}, serverCodec,
 		srv.WithHandler(
 			handler.WithAt(),
 		),
 	)
+	assert.EqualError(err, nil)
 	// Start server.
 	fmt.Printf("Starting server on %s...\n", addr)
 	wgS.Add(1)
@@ -57,7 +62,7 @@ func main() {
 	err = server.Close()
 	assert.EqualError(err, nil)
 
-	// Start the server again arter some time.
+	// Start the server again after some time.
 	time.Sleep(time.Second)
 	fmt.Println("Starting server again...")
 	wgS.Add(1)
@@ -83,23 +88,23 @@ func main() {
 	wgS.Wait()
 }
 
-func MakeReconnectSender(addr string, codec cln.Codec[rcvr.Greeter]) (
-	sender sndr.Sender[rcvr.Greeter], err error,
+func MakeReconnectSender(addr string, codec cln.Codec[struct{}]) (
+	sender sndr.Sender[struct{}], err error,
 ) {
 	return cmdstream.NewSender(addr, codec,
 		sndr.WithGroup(
-			grp.WithReconnect[rcvr.Greeter](),
+			grp.WithReconnect[struct{}](),
 		),
 	)
 }
 
-func SendCmd(sender sndr.Sender[rcvr.Greeter]) {
+func SendCmd(sender sndr.Sender[struct{}]) {
 	var (
-		cmd  = cmds.SayHelloCmd{Str: "world"}
-		want = results.Greeting("Hello world")
+		cmd  = examples.Message("message")
+		want = examples.Message("message")
 	)
-	greeting, err := utils.SendCmd(cmd, sender)
+	result, err := sender.Send(context.Background(), cmd)
 	assert.EqualError(err, nil)
-	fmt.Printf("Sending \"SayHelloCmd\" with \"world\"... Result: %q\n", greeting)
-	assert.Equal(greeting, want)
+	fmt.Printf("Sending \"%v\"... Result: \"%v\"\n", cmd, result)
+	assert.Equal(result.(examples.Message), want)
 }
