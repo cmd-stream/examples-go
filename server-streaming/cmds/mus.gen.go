@@ -39,7 +39,7 @@ func (s sayFancyHelloMultiCmdMUS) Skip(r mus.Reader) (n int, err error) {
 	return
 }
 
-var SayFancyHelloMultiCmdTypedMUS = typed.NewTypedSer(SayFancyHelloMultiCmdDTM, SayFancyHelloMultiCmdMUS)
+var SayFancyHelloMultiCmdTypedMUS = typed.NewSer(SayFancyHelloMultiCmdDTM, SayFancyHelloMultiCmdMUS)
 
 var CmdMUS = cmdMUS{}
 

@@ -62,7 +62,7 @@ func (s traceSayHelloCmdMUS) Skip(r mus.Reader) (n int, err error) {
 	return
 }
 
-var TraceSayHelloCmdTypedMUS = typed.NewTypedSer(TraceSayHelloCmdDTM, TraceSayHelloCmdMUS)
+var TraceSayHelloCmdTypedMUS = typed.NewSer(TraceSayHelloCmdDTM, TraceSayHelloCmdMUS)
 
 var TraceSayFancyHelloCmdMUS = traceSayFancyHelloCmdMUS{}
 
@@ -106,7 +106,7 @@ func (s traceSayFancyHelloCmdMUS) Skip(r mus.Reader) (n int, err error) {
 	return
 }
 
-var TraceSayFancyHelloCmdTypedMUS = typed.NewTypedSer(TraceSayFancyHelloCmdDTM, TraceSayFancyHelloCmdMUS)
+var TraceSayFancyHelloCmdTypedMUS = typed.NewSer(TraceSayFancyHelloCmdDTM, TraceSayFancyHelloCmdMUS)
 
 var CmdMUS = cmdMUS{}
 

@@ -41,7 +41,7 @@ func (s greetingMUS) Skip(r mus.Reader) (n int, err error) {
 	return ord.String.Skip(r)
 }
 
-var GreetingTypedMUS = typed.NewTypedSer(GreetingDTM, GreetingMUS)
+var GreetingTypedMUS = typed.NewSer(GreetingDTM, GreetingMUS)
 
 var ResultMUS = resultMUS{}
 

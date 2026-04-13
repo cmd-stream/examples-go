@@ -45,7 +45,7 @@ func (s sayHelloCmdMUS) Skip(r mus.Reader) (n int, err error) {
 	return
 }
 
-var SayHelloCmdTypedMUS = typed.NewTypedSer(SayHelloCmdDTM, SayHelloCmdMUS)
+var SayHelloCmdTypedMUS = typed.NewSer(SayHelloCmdDTM, SayHelloCmdMUS)
 
 var SayFancyHelloCmdMUS = sayFancyHelloCmdMUS{}
 
@@ -69,7 +69,7 @@ func (s sayFancyHelloCmdMUS) Skip(r mus.Reader) (n int, err error) {
 	return
 }
 
-var SayFancyHelloCmdTypedMUS = typed.NewTypedSer(SayFancyHelloCmdDTM, SayFancyHelloCmdMUS)
+var SayFancyHelloCmdTypedMUS = typed.NewSer(SayFancyHelloCmdDTM, SayFancyHelloCmdMUS)
 
 var CmdMUS = cmdMUS{}
 

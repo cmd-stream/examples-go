@@ -4,13 +4,13 @@ go 1.24.1
 
 require (
 	github.com/brianvoe/gofakeit v3.18.0+incompatible
-	github.com/cmd-stream/cmd-stream-go v0.5.2
-	github.com/cmd-stream/codec-json-go v0.0.0-20260411034546-9ff60cf69869
-	github.com/cmd-stream/codec-mus-stream-go v0.0.0-20260411034922-2b89fe7be615
-	github.com/cmd-stream/codec-protobuf-go v0.0.0-20260411034822-d50020f51d7e
+	github.com/cmd-stream/cmd-stream-go v0.6.0
+	github.com/cmd-stream/codec-json-go v0.0.0-20260413004247-41a1f458bfae
+	github.com/cmd-stream/codec-mus-stream-go v0.0.0-20260413004838-20aa97968d96
+	github.com/cmd-stream/codec-protobuf-go v0.0.0-20260413004700-d83ebb81c896
 	github.com/mus-format/common-go v0.0.0-20260324174526-3d8f1741b5a2
 	github.com/mus-format/mus-gen-go v0.4.0
-	github.com/mus-format/mus-stream-go v0.9.1
+	github.com/mus-format/mus-stream-go v0.10.0
 	github.com/ymz-ncnk/assert v0.0.0-20260108210721-155bc9aa4282
 	github.com/ymz-ncnk/circbrk-go v0.0.0-20260117185435-2da55ad9387e
 	go.opentelemetry.io/otel v1.36.0
@@ -25,11 +25,11 @@ require (
 	google.golang.org/protobuf v1.36.10
 )
 
-require github.com/cmd-stream/codec-go v0.0.0-20260411034229-e83a42567a3a // indirect
+require github.com/cmd-stream/codec-go v0.0.0-20260413003835-6ba4c28f0611 // indirect
 
 require (
 	github.com/cenkalti/backoff/v5 v5.0.2 // indirect
-	github.com/cmd-stream/otelcmd-stream-go v0.2.0
+	github.com/cmd-stream/otelcmd-stream-go v0.2.2-0.20260413004938-69a5d39efb36
 	github.com/go-logr/logr v1.4.2 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
 	github.com/google/uuid v1.6.0 // indirect
