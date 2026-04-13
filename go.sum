@@ -12,8 +12,8 @@ github.com/cmd-stream/codec-mus-stream-go v0.0.0-20260413004838-20aa97968d96 h1:
 github.com/cmd-stream/codec-mus-stream-go v0.0.0-20260413004838-20aa97968d96/go.mod h1:ICorxRSXYLVA/zvGwM5v9GF4T/VJlK2bXsjyDbgFNzo=
 github.com/cmd-stream/codec-protobuf-go v0.0.0-20260413004700-d83ebb81c896 h1:CIMVJ6ZFOMTLhF4O/NwhrsbeaSp8kJMyyGV5wj4smqg=
 github.com/cmd-stream/codec-protobuf-go v0.0.0-20260413004700-d83ebb81c896/go.mod h1:Hj+pASBJSajlQm6XCVatVeH8mcz1lejFURcKCIosQYY=
-github.com/cmd-stream/otelcmd-stream-go v0.2.2-0.20260413004938-69a5d39efb36 h1:LiqHN29P+58o8idrrX80wGazbk3Y+VXh/02WZ8//RK0=
-github.com/cmd-stream/otelcmd-stream-go v0.2.2-0.20260413004938-69a5d39efb36/go.mod h1:qzP6t6+1LtrXIytpllIwd7g85j8V2MYtUnCdy6AlQzw=
+github.com/cmd-stream/otelcmd-stream-go v0.2.2 h1:PYoMveQ2Yzo+QJV8YBLycw6SAHeX8fvs6HNfWhqQvWs=
+github.com/cmd-stream/otelcmd-stream-go v0.2.2/go.mod h1:qzP6t6+1LtrXIytpllIwd7g85j8V2MYtUnCdy6AlQzw=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/go-logr/logr v1.2.2/go.mod h1:jdQByPbusPIv2/zmleS9BjJVeZ6kBagPoEUsqbVz/1A=

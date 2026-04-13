@@ -29,7 +29,7 @@ require github.com/cmd-stream/codec-go v0.0.0-20260413003835-6ba4c28f0611 // ind
 
 require (
 	github.com/cenkalti/backoff/v5 v5.0.2 // indirect
-	github.com/cmd-stream/otelcmd-stream-go v0.2.2-0.20260413004938-69a5d39efb36
+	github.com/cmd-stream/otelcmd-stream-go v0.2.2
 	github.com/go-logr/logr v1.4.2 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
 	github.com/google/uuid v1.6.0 // indirect
