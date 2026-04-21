@@ -5,9 +5,9 @@ go 1.24.1
 require (
 	github.com/brianvoe/gofakeit v3.18.0+incompatible
 	github.com/cmd-stream/cmd-stream-go v0.6.1
-	github.com/cmd-stream/codec-json-go v0.0.0-20260415035027-080938b4a464
+	github.com/cmd-stream/codec-json-go v0.0.0-20260421202202-cd29f9c4adfc
 	github.com/cmd-stream/codec-mus-stream-go v0.0.0-20260415035208-ba6c3f57289a
-	github.com/cmd-stream/codec-protobuf-go v0.0.0-20260415035117-cc50bb20a74c
+	github.com/cmd-stream/codec-protobuf-go v0.0.0-20260421210102-d8dfaf03511a
 	github.com/mus-format/common-go v0.0.0-20260324174526-3d8f1741b5a2
 	github.com/mus-format/mus-gen-go v0.5.1
 	github.com/mus-format/mus-stream-go v0.10.1
@@ -25,7 +25,7 @@ require (
 	google.golang.org/protobuf v1.36.10
 )
 
-require github.com/cmd-stream/codec-go v0.0.0-20260415034841-ea32e1196ae9 // indirect
+require github.com/cmd-stream/codec-go v0.0.0-20260421172244-cee5b400964e // indirect
 
 require (
 	github.com/cenkalti/backoff/v5 v5.0.2 // indirect

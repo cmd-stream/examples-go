@@ -3,11 +3,10 @@ package main
 import (
 	"context"
 	"fmt"
-	"reflect"
 	"time"
 
 	cmdstream "github.com/cmd-stream/cmd-stream-go"
-	cdc "github.com/cmd-stream/codec-protobuf-go"
+	cdcproto "github.com/cmd-stream/codec-protobuf-go"
 	"github.com/cmd-stream/examples-go/calc_protobuf/cmds"
 	rcvr "github.com/cmd-stream/examples-go/calc_protobuf/receiver"
 	"github.com/cmd-stream/examples-go/calc_protobuf/results"
@@ -16,15 +15,25 @@ import (
 func main() {
 	const addr = "127.0.0.1:9000"
 	var (
-		cmdTypes = []reflect.Type{
-			reflect.TypeFor[*cmds.AddCmd](),
-			reflect.TypeFor[*cmds.SubCmd](),
-		}
-		resultTypes = []reflect.Type{
-			reflect.TypeFor[*results.CalcResult](),
-		}
-		serverCodec = cdc.NewServerCodec[rcvr.Calc](cmdTypes, resultTypes)
-		clientCodec = cdc.NewClientCodec[rcvr.Calc](cmdTypes, resultTypes)
+		registry = cdcproto.NewRegistry(
+			cdcproto.WithCmd[rcvr.Calc, *cmds.AddCmd](),
+			cdcproto.WithCmd[rcvr.Calc, *cmds.SubCmd](),
+			cdcproto.WithResult[rcvr.Calc, *results.CalcResult](),
+		)
+		serverCodec = cdcproto.NewServerCodecWith(registry)
+		clientCodec = cdcproto.NewClientCodecWith(registry)
+
+		// Alternatively, you can create codecs manually using reflection types:
+		//
+		// cmdTypes = []reflect.Type{
+		// 	 reflect.TypeFor[*cmds.AddCmd](),
+		// 	 reflect.TypeFor[*cmds.SubCmd](),
+		// }
+		// resultTypes = []reflect.Type{
+		// 	 reflect.TypeFor[*results.CalcResult](),
+		// }
+		// serverCodec = cdcproto.NewServerCodec[rcvr.Calc](cmdTypes, resultTypes)
+		// clientCodec = cdcproto.NewClientCodec[rcvr.Calc](cmdTypes, resultTypes)
 	)
 
 	// Start server.

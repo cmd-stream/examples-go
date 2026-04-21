@@ -3,26 +3,34 @@ package main
 import (
 	"context"
 	"fmt"
-	"reflect"
 	"time"
 
 	cmdstream "github.com/cmd-stream/cmd-stream-go"
-	cdc "github.com/cmd-stream/codec-json-go"
+	cdcjson "github.com/cmd-stream/codec-json-go"
 )
 
 func main() {
 	const addr = "127.0.0.1:9000"
 	var (
-		// invoker  = srv.NewInvoker[Calc](NewCalc())
-		cmdTypes = []reflect.Type{
-			reflect.TypeFor[AddCmd](),
-			reflect.TypeFor[SubCmd](),
-		}
-		resultTypes = []reflect.Type{
-			reflect.TypeFor[CalcResult](),
-		}
-		serverCodec = cdc.NewServerCodec[Calc](cmdTypes, resultTypes)
-		clientCodec = cdc.NewClientCodec[Calc](cmdTypes, resultTypes)
+		registry = cdcjson.NewRegistry(
+			cdcjson.WithCmd[Calc, AddCmd](),
+			cdcjson.WithCmd[Calc, SubCmd](),
+			cdcjson.WithResult[Calc, CalcResult](),
+		)
+		serverCodec = cdcjson.NewServerCodecWith(registry)
+		clientCodec = cdcjson.NewClientCodecWith(registry)
+
+		// Alternatively, you can create codecs manually using reflection types:
+		//
+		// cmdTypes = []reflect.Type{
+		// 	 reflect.TypeFor[AddCmd](),
+		// 	 reflect.TypeFor[SubCmd](),
+		// }
+		// resultTypes = []reflect.Type{
+		// 	 reflect.TypeFor[CalcResult](),
+		// }
+		// serverCodec = cdcjson.NewServerCodec[Calc](cmdTypes, resultTypes)
+		// clientCodec = cdcjson.NewClientCodec[Calc](cmdTypes, resultTypes)
 	)
 
 	// Start server.

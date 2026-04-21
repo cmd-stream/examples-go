@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"fmt"
-	"reflect"
 	"time"
 
 	cmdstream "github.com/cmd-stream/cmd-stream-go"
@@ -12,7 +11,7 @@ import (
 	grp "github.com/cmd-stream/cmd-stream-go/group"
 	sndr "github.com/cmd-stream/cmd-stream-go/sender"
 	hks "github.com/cmd-stream/cmd-stream-go/sender/hooks"
-	cdc "github.com/cmd-stream/codec-json-go"
+	cdcjson "github.com/cmd-stream/codec-json-go"
 	examples "github.com/cmd-stream/examples-go"
 	assert "github.com/ymz-ncnk/assert/panic"
 	"github.com/ymz-ncnk/circbrk-go"
@@ -21,14 +20,12 @@ import (
 func main() {
 	const addr = "127.0.0.1:9000"
 	var (
-		cmdTypes = []reflect.Type{
-			reflect.TypeFor[examples.Message](),
-		}
-		resultTypes = []reflect.Type{
-			reflect.TypeFor[examples.Message](),
-		}
-		serverCodec = cdc.NewServerCodec[struct{}](cmdTypes, resultTypes)
-		clientCodec = cdc.NewClientCodec[struct{}](cmdTypes, resultTypes)
+		registry = cdcjson.NewRegistry(
+			cdcjson.WithCmd[struct{}, examples.Message](),
+			cdcjson.WithResult[struct{}, examples.Message](),
+		)
+		serverCodec = cdcjson.NewServerCodecWith(registry)
+		clientCodec = cdcjson.NewClientCodecWith(registry)
 	)
 
 	// Start server.

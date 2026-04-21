@@ -4,7 +4,6 @@ import (
 	"context"
 	"crypto/tls"
 	"fmt"
-	"reflect"
 	"sync"
 	"time"
 
@@ -13,7 +12,7 @@ import (
 	"github.com/cmd-stream/cmd-stream-go/handler"
 	sndr "github.com/cmd-stream/cmd-stream-go/sender"
 	srv "github.com/cmd-stream/cmd-stream-go/server"
-	cdc "github.com/cmd-stream/codec-json-go"
+	cdcjson "github.com/cmd-stream/codec-json-go"
 	examples "github.com/cmd-stream/examples-go"
 	assert "github.com/ymz-ncnk/assert/panic"
 )
@@ -30,14 +29,13 @@ func main() {
 	assert.EqualError(err, nil)
 
 	var (
-		cmdTypes = []reflect.Type{
-			reflect.TypeFor[examples.Message](),
-		}
-		resultTypes = []reflect.Type{
-			reflect.TypeFor[examples.Message](),
-		}
-		serverCodec   = cdc.NewServerCodec[struct{}](cmdTypes, resultTypes)
-		clientCodec   = cdc.NewClientCodec[struct{}](cmdTypes, resultTypes)
+		registry = cdcjson.NewRegistry(
+			cdcjson.WithCmd[struct{}, examples.Message](),
+			cdcjson.WithResult[struct{}, examples.Message](),
+		)
+		serverCodec = cdcjson.NewServerCodecWith(registry)
+		clientCodec = cdcjson.NewClientCodecWith(registry)
+
 		serverTLSConf = tls.Config{Certificates: []tls.Certificate{serverCert}}
 		clientTLSConf = tls.Config{
 			Certificates:       []tls.Certificate{clientCert},

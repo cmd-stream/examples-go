@@ -16,7 +16,7 @@ import (
 	"github.com/cmd-stream/cmd-stream-go/handler"
 	sndr "github.com/cmd-stream/cmd-stream-go/sender"
 	srv "github.com/cmd-stream/cmd-stream-go/server"
-	cdc "github.com/cmd-stream/codec-mus-stream-go"
+	cdcmuss "github.com/cmd-stream/codec-mus-stream-go"
 	"github.com/cmd-stream/examples-go/hello-world/cmds"
 	rcvr "github.com/cmd-stream/examples-go/hello-world/receiver"
 	"github.com/cmd-stream/examples-go/hello-world/results"
@@ -34,8 +34,8 @@ func main() {
 		greeter = rcvr.NewGreeter("Hello", "incredible", " ")
 		// Serializers of core.Cmd and core.Result interfaces allow building
 		// server/client codecs.
-		serverCodec = cdc.NewServerCodec(cmds.CmdMUS, results.ResultMUS)
-		clientCodec = cdc.NewClientCodec(cmds.CmdMUS, results.ResultMUS)
+		serverCodec = cdcmuss.NewServerCodec(cmds.CmdMUS, results.ResultMUS)
+		clientCodec = cdcmuss.NewClientCodec(cmds.CmdMUS, results.ResultMUS)
 		// // Alternative JSON codecs, require github.com/cmd-stream/codec-json-go:
 		// cmdTypes = []reflect.Type{
 		//   reflect.TypeFor[cmds.SayHelloCmd](),
